@@ -1,19 +1,23 @@
 # 网络IO
 
-#### 同步模型、异步模型
+### 同步模型、异步模型
 
-- 同步模型：程序自己读取，程序在IO上的模型就叫**同步模型**
-- 异步模型：程序把读取的过程交给内核，自己做自己的事情，叫**异步模型**
+- 同步模型：程序自己读取，程序在IO上的模型就叫 **同步模型**
+- 异步模型：程序把读取的过程交给内核，自己做自己的事情，叫 **异步模型**
 
 允许程序去调用内核，来监控更多的客户端，直到一个或多个文件描述符是可用的状态，再返回。减少了用户态、内核态的无用切换。
 
-#### BIO
+
+
+### BIO
 
 - 阻塞式的 `ServerSocket`
   - 阻塞地等待客户端的连接，连接后抛出一个线程
   - 阻塞地等待客户端发送消息
+  
+  
 
-#### NIO
+### NIO
 
 - 非阻塞式的 `ServerSocketChannel`
   - `ss.configBlocking(false)` 设置非阻塞
@@ -24,17 +28,37 @@
 
     - 放大：C10K当并发量很大的时候，文件描述符会很多，每循环一次，都要调用一次recv系统调用（复杂度O(n)），进行用户态到内核态的切换，切换时性能损耗大。
     - 缩小：当C10K只有1个C发来了数据，只使用到了1个有用的系统调用，剩余n-1次的监听都是无效的
+    
+    
 
-#### 多路复用
+### 多路复用
+
+OS提供的多路复用器有 select, pool, epoll, kqueue 等，而 Java 把所有的多路复用器封装成了 Selector
+
+可以在启动时，指定使用哪种多路复用器（默认优先选择 epoll），注意 windows 上是没有 epoll 的。
+
+```java
+-Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
+```
 
 - Linux内核提供的`select`多路复用器返回给程序一个list，告诉程序哪些可以读取，然后程序要自己读取。这是同步模型。
 
 - 缺点
   - 如果有很多长连接，内核每次都要给程序传递很多连接对象
 
-#### epoll
 
-- epoll 也是多路复用器，但是它有一个链表，规避了对于文件描述符的全量遍历，这是它与 select poll 的区别。
+
+### epoll
+
+- epoll 也是多路复用器，但是它有一个**存放结果集的链表**，**它与 select / poll 的区别如下：**
+
+  - select：应用程什么时候调用 select，内核就什么时候遍历所有的文件描述符，修正 fd 的状态。
+
+  - epoll：应用程序在内核的红黑树中存放过一些fd，那么，内核基于中断处理完 fd 的 buffer/状态 之后，继续把有状态的 fd 拷贝到链表中。
+
+    即便应用程序不调用内核，内核也会随着中断，完成所有fd状态的设置。这样，程序调用`epoll_wait`可以及时去取链表包含中有状态的 fd 的结果集。规避了对于文件描述符的全量遍历。
+
+    拿到 fd 的结果集之后，**程序需要自己取处理 accept / recv 等系统调用的过程**。所以`epoll_wait`依然是同步模型。
 
 - 它不负责读取IO，只关心返回结果
 
@@ -60,19 +84,21 @@
 
   - `epoll_wait` waits for I/O events, blocking the calling thread if no events are currently available.
 
-    epoll_wait 在等待链表中放入数据，而不需要去遍历所有的文件描述符。
+    **epoll_wait 不传递 fds，不触发内核遍历。**
 
 - 早期在没有上述三个系统调用的时候，使用了 mmap 来提速，后期在 2.6 内核版本之后，提供了这些系统调用，就不需要 mmap 这种实现方式了。在早期，需要用户调用 mmap 实现两端的内存共享。
 
 
 
-#### AIO
+### AIO
 
 - AIO 是异步的模型
 - 使用的是 callback / hook / templateMethod 回调，是基于事件模型的 IO
 - Netty封装的是NIO，不是AIO
   - AIO只有Window支持（内核中使用CompletionPort完成端口）
   - 在Linux上的AIO只不过是对NIO的封装而已（是基于epoll的轮询）
+
+
 
 ### Netty
 
@@ -83,4 +109,152 @@ Netty主要用于网络通信。
 
 
 
-![image-20200718112457843](C:\Users\Bug\Desktop\大总结\image-20200718112457843.png)
+![epoll](images/image-20200718112457843.png)
+
+
+
+
+
+### Java 中对于多路复用的封装
+
+```java
+package com.bjmashibing.system.io;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Set;
+
+public class SocketMultiplexingSingleThreadv1 {
+
+    //坦克一、二期（netty）
+    private ServerSocketChannel server = null;
+    private Selector selector = null;   //linux 提供多路复用器（select poll epoll kqueue）等，在java中被封装为Selector。拓展：nginx的event模块
+    int port = 9090;
+
+    public void initServer() {
+        try {
+            server = ServerSocketChannel.open();
+            server.configureBlocking(false); // 设置成非阻塞
+            server.bind(new InetSocketAddress(port));  // 绑定监听的端口号
+
+            //如果在epoll模型下，Selector.open()其实完成了epoll_create，可能给你返回了一个 fd3
+            selector = Selector.open();  // 可以选择 select  poll  *epoll，在linux中会优先选择epoll  但是可以在JVM使用-D参数修正
+            /*
+                server 约等于 listen 状态的 fd4
+                server.register()初始化过程：
+                1、如果在select，poll的模型下，Selector.open()操作实际上是在jvm里开辟一个数组，把fd4放进去
+                2、如果在epoll的模型下，调用了epoll_ctl(fd3,ADD,fd4,EPOLLIN)
+             */
+            server.register(selector, SelectionKey.OP_ACCEPT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void start() {
+        initServer();
+        System.out.println("服务器启动了");
+        try {
+            while (true) {  //死循环
+                Set<SelectionKey> keys = selector.keys();
+                System.out.println("keys.size() = " + keys.size());
+                //1、selector.select调用多路复用器(分为select,poll or epoll(实质上是调用的epoll_wait))
+                /*
+                    java中调用的select()方法是啥意思：
+                        1、如果用select，poll模型，其实调的是内核的select方法，并传入参数（fd4），或者poll(fd4)
+                        2、如果用epoll模型，其实调用的是内核的epoll_wait()，因为fd4在上面的epoll_ctl已经传进去了
+                    注意：
+                        参数可以带时间。如果没有时间，或者时间是0，代表阻塞。如果有时间，则设置一个超时时间。
+                        方法selector.wakeup()可以外部控制让它不阻塞。这时select的结果返回是0。
+                    懒加载：
+                        其实再触碰到selector.select()调用的时候，触发了epoll_ctl的调用
+                 */
+                while (selector.select(500) > 0) {
+                    Set<SelectionKey> selectionKeys = selector.selectedKeys();  // 拿到返回的有状态的fd结果集
+                    Iterator<SelectionKey> iter = selectionKeys.iterator();  // 将有状态的fd结果集转成迭代器
+                    //所以，不管你是哪一种多路复用器，你只能告诉我fd的状态，我作为应用程序，还需要一个一个的去处理他们的R/W。同步好辛苦！！！
+                    //我们之前用NIO的时候，需要自己对每一个fd都去调用系统调用，浪费资源。那么你看，现在是不是只调用了一次select方法，就能知道具体的那些可以R/W了？是不是很省力？
+                    while (iter.hasNext()) {
+                        SelectionKey key = iter.next();
+                        iter.remove(); //这时一个set，不移除的话会重复循环处理
+                        if (key.isAcceptable()) { //我前边强调过，socket分为两种，一种是listen的，一种是用于通信 R/W 的，所以拿到之后需要判断它是可读还是可写。
+                            //这里是重点，如果要去接受一个新的连接，语义上，accept接受连接且返回新连接的FD，对吧？
+                            //那新的FD放在哪里？
+                            //1、如果使用select，poll的时候，因为他们在内核没有开辟空间，那么由jvm去维护一个集合(是个native方法)，和前边的fd4那个listen的放在一起
+                            //2、如果使用epoll的话，我们希望通过epoll_ctl把新的客户端fd注册到内核空间
+                            acceptHandler(key);
+                        } else if (key.isReadable()) {
+                            readHandler(key);
+                            //在当前线程，readHandler处理了很多东西，那么这个方法可能会阻塞，如果阻塞了十年，其他的IO早就没电了。那其他的IO怎么办？
+                            //所以，这就是为什么提出了IO THREADS，我把读到的东西扔出去，而不是现场处理
+                            //你想，redis是不是用了epoll？redis是不是有个io threads的概念？redis是不是单线程的？它的worker是单线程的，但是它的io threads是多线程的。
+                            //你想，tomcat 8,9版本之后，是不是也提出了一种异步的处理方式？是不是也在 IO 和处理上解耦？
+                            //这些都是等效的。
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void acceptHandler(SelectionKey key) {
+        try {
+            ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
+            SocketChannel client = ssc.accept(); //来啦，目的是调用accept接受客户端  fd7
+            client.configureBlocking(false);
+
+            ByteBuffer buffer = ByteBuffer.allocate(8192);  //前边讲过了
+            /*
+                你看，调用了register。register做了什么呢？
+                1、select，poll：在jvm里开辟一个数组，把 fd7 放进去
+                2、epoll：调用epoll_ctl(fd3,ADD,fd7,EPOLLIN
+             */
+            client.register(selector, SelectionKey.OP_READ, buffer);
+            System.out.println("新客户端：" + client.getRemoteAddress());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void readHandler(SelectionKey key) {
+        SocketChannel client = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+        buffer.clear();
+        int read = 0;
+        try {
+            while (true) {
+                read = client.read(buffer);
+                if (read > 0) {
+                    buffer.flip();
+                    while (buffer.hasRemaining()) {
+                        client.write(buffer);
+                    }
+                    buffer.clear();
+                } else if (read == 0) {
+                    break;
+                } else {
+                    client.close();
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        SocketMultiplexingSingleThreadv1 service = new SocketMultiplexingSingleThreadv1();
+        service.start();
+    }
+}
+
+```
+

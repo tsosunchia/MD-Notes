@@ -7,7 +7,7 @@
   - fd
   - 红黑树
 
-<img src="C:\Users\Bug\Desktop\大总结\image-20200625011727690.png" alt="image-20200625011727690" style="zoom:50%;" />
+<img src="images/image-20200625011727690.png" alt="image-20200625011727690" style="zoom:70%;" />
 
 - 零拷贝
 
@@ -182,7 +182,7 @@ appendfsync no
 
 #### AKF拆分原则
 
-<img src="C:\Users\Bug\Desktop\大总结\akf.png" alt="akf" style="zoom:44%;" />
+<img src="images/akf.png" alt="akf" style="zoom:44%;" />
 
 - X轴：可以是Redis实例的副本，数据库的副本等
   - 读写分离，增加备用性，**解决单点故障** 问题

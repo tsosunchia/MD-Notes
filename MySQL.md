@@ -80,7 +80,7 @@ select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 - 隔离级别
   - 能够模拟脏读、幻读、不可重复读的情况
 
-<img src="C:\Users\Bug\Desktop\大总结\20200622212043729.png" alt="img" style="zoom:67%;" />
+<img src="images/20200622212043729.png" alt="img" style="zoom:67%;" />
 
 - ACID
   - Atomicity 原子性

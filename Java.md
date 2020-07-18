@@ -332,13 +332,48 @@ public class TestLock {
 
 #### volatile
 
-​		保证线程的可见性，同时禁止指令的重排序。
+作用：一个线程中的改变，在另一个线程中可以立刻看到。
 
-​		一个线程中的改变，在另一个线程中可以立刻看到。
+- 保证线程的可见性
+- 禁止指令的重排序
 
 ##### DCL单例要不要加volitile？
 
-​		需要。为了防止指令重排序导致拿到半初始化的变量。
+需要。为了防止指令重排序导致拿到半初始化的变量。
+
+```java
+public class SingleInstance {
+    private SingleInstance() {}
+    private static SingleInstance INSTANCE;
+
+    public static SingleInstance getInstance() {
+        if (INSTANCE == null) {
+            synchronized (SingleInstance.class) {
+                if (INSTANCE == null) {  // Double Check Lock
+                    INSTANCE = new SingleInstance();
+                }
+            }
+        }
+        return INSTANCE;
+    }
+}
+```
+
+`INSTANCE = new SingleInstance()` 创建实例对象时，单条语句编译后形成的指令，并不是一个原子操作，**可能该条语句的部分指令未得到执行，就被切换到另一个线程了**，它是分三步来完成的：
+
+```asm
+0  new  #2 <T>
+3  dup
+4  invokespecial  #3  <T.<init>>
+7  astore_1
+8  return　
+```
+
+1. 创建内存空间。
+2. 执行构造函数，初始化（init）
+3. 将 INSTANCE 引用指向分配的内存空间
+
+JVM 为了优化指令，允许指令重排序，有可能按照 **1–>3–>2** 步骤来执行。这时候，当线程 a 执行步骤 3 完毕，在执行步骤 2 之前，被切换到线程 b 上，这时候 INSTANCE 判断为非空，此时线程 b 直接来到 `return instance` 语句，拿走 INSTANCE 然后使用，导致拿到半初始化的变量。
 
 ##### 硬件和JVM如何保证特定情况下不乱序？
 
@@ -484,22 +519,26 @@ public class TestLock {
 
 经过试验，一个`Object o = new Object()` 是16字节
 
-- 8字节（对象头）
-- 4字节（开启压缩时的对象指针）
-- 4字节 padding（对齐）
+- 8 字节（对象头 MarkWord，它的大小是固定的）
+- 4 字节（开启压缩时的对象指针 ClassPointer）
+- 4 字节 padding（对齐，要被 8 整除）
 
 ##### 对象头 MarkWord 包括什么？
 
-jdk8 对象的 MarkWord 布局：
+MarkWord 里面包括：锁信息、HashCode、GC信息。
 
-<img src="images/objecthead.png" style="zoom: 50%;" />
+JDK8 对象的 MarkWord 布局如下：
 
-为什么GC年龄默认为15？因为分代年龄只有4bit，可以表示最大的数就是15
+<img src="images/objecthead.png" style="zoom: 70%;" />
+
+为什么 GC 年龄默认为 15？因为分代年龄只有 4 bit，可以表示最大的数就是 15
 
 ##### 对象怎么定位？
 
-- 句柄池
-- 直接指针（HotSpot用这种方式）
+怎么通过 `t` 找到 `new T()`？
+
+- 通过句柄池（间接法）
+- 通过直接指针（HotSpot用的是这种方式）
 
 
 
@@ -627,7 +666,7 @@ PS 默认是15，CMS 默认是 6
 
 #### 对象分配过程？
 
-1. start 会 new 一个对象，首先在栈上分配，如果能分配到栈上，则分配到栈上
+1. start 会 new 一个对象，首先尝试在栈上分配，如果能分配到栈上，则分配到栈上（一旦方法弹出，整个生命周期就结束，这样就不需要垃圾回收了，提高了效率。什么样的对象能在栈上分配？满足可以进行逃逸分析、标量替换的对象，可以分配到栈上。）
 2. 如果栈上分配不下，判断是否大对象
    - 如果是大对象，直接进入 old 区
    - 如果不是大对象，进入 TLAB 线程本地，到 eden 区
@@ -637,6 +676,24 @@ PS 默认是15，CMS 默认是 6
    - 如果 survivor 区年龄到达，进入 old 区
 
 **动态年龄，分配担保**：了解即可
+
+
+
+#### 为什么 hotspot 不使用 C++ 对象来代表 java 对象？
+
+为什么不为每个Java类生成一个C++类与之对应？
+
+因为 C++ 对象里面有一个 virtual table 指针，而HotSopt JVM的设计者不想让每个对象中都含有一个vtable（虚函数表），而是设计了一个 OOP-Klass Model，把对象模型拆成 klass 和 oop
+
+- OOP 指的是 Ordinary Object Pointer （普通对象指针），它用来表示对象的实例信息，看起来像个指针实际上是藏在指针里的对象。OOP 中不含有任何虚函数。
+
+- Klass 简单的说是Java类在HotSpot中的 C++ 对等体，用来描述 Java 类。Klass 含有虚函数表，可以进行method dispatch，Klass主要有两个功能：
+  - 实现语言层面的Java类
+  - 实现Java对象的分发功能
+
+
+
+#### Class 对象是在堆还是在方法区？
 
 
 

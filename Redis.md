@@ -1,3 +1,7 @@
+---
+typora-copy-images-to: /images/
+---
+
 # Redis
 
 ### 内存模型

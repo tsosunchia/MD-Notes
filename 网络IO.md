@@ -1,8 +1,8 @@
 ---
-typora-copy-images-to: images
+typora-copy-images-to: /images/
 ---
 
-typora-copy-images-to: /images/
+
 
 # 网络IO
 
@@ -103,6 +103,14 @@ OS提供的多路复用器有 select, pool, epoll, kqueue 等，而 Java 把所�
 - Netty封装的是NIO，不是AIO
   - AIO只有Window支持（内核中使用CompletionPort完成端口）
   - 在Linux上的AIO只不过是对NIO的封装而已（是基于epoll的轮询）
+
+“停止使用这种只适用于特殊情况的垃圾，让所有人都在乎的系统核心尽其所能地运行好其基本的性能”，就是说，你cpu做你cpu该做的事，别净整些没用的。。
+
+就像系统调用那样，尽管Linux上建立一个新的系统调用非常容易，但并不提倡每出现一种新的抽象就简单的加入一个新的系统调用。这使得它的系统调用接口简洁得令人叹为观止（2.6版本338个），新系统调用增加频率很低也反映出它是一个相对较稳定并且功能已经较为完善的操作系统。
+
+这也是为什么以前Linux版本的主内核树中没有类似于windows 上 AIO这样的通用的内核异步IO处理方案（在Linux 上的AIO只不过是对 NIO 的封装而已），因为不安全，会让内核做的事情太多，容易出bug。windows敢于这么做，是因为它的市场比较广，一方面是用户市场，一方面是服务器市场，况且windows比较注重用户市场，所以敢于把内核做的胖一些，也是因此虽然现在已经win10了，但是蓝屏啊，死机啊，挂机啊这些问题也还是会出现。
+
+
 
 
 
@@ -286,7 +294,7 @@ public class SocketMultiplexingSingleThreadv1 {
 3. **S -> C (FIN)**    S 说，我也想断开
 4. **C -> S (ack)**    C 说，好的，断开吧
 
-还会等两个传输时间，才会释放资源
+**四次分手之后，还会等两个传输时间，才会释放资源。**因为如果最后 C 端返回的 ACK 号丢失了，这时 S 端没有收到 ACK，会重发一遍 FIN，如果此时客户端的套接字已经被删除了，会发生什么呢？套接字被删除，端口被释放，这时别的应用可能创建新的套接字，恰好分配了同一个端口号，而服务器重发的 FIN 正好到达，这个 FIN 就会错误的跑到新的套接字里面，新的套接字就开始执行断开操作了。为了避免这样的误操作，C 端会等几分钟再删除套接字。
 
 
 
@@ -310,8 +318,7 @@ public class SocketMultiplexingSingleThreadv1 {
 
     ![route.png](images/route.png)
     
-  - 通过修改 mac 地址找下一跳，在不考虑 NAT 的情况下，ip 地址不会改变
+  - 通过修改 mac 地址找下一跳。在不考虑 NAT 的情况下，ip 地址不会改变
   
     - mac 地址记录在 arp 表中
-  
-  - 链路层![image-20200720214822018](images/lianluceng.png)
+    - 链路层![lianluceng](images/lianluceng.png)

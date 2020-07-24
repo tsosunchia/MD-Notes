@@ -1,3 +1,7 @@
+---
+typora-copy-images-to: /images/
+---
+
 # MySQL
 
 ##### log 有多少种？

@@ -20,26 +20,35 @@ typora-copy-images-to: /images/
 - 阻塞式的 `ServerSocket`
   - 阻塞地等待客户端的连接，连接后抛出一个线程
   - 阻塞地等待客户端发送消息
+  - C10K 问题，如果有1万个连接，就要抛出1万个线程
   
   
 
 ### NIO
 
+Java：New IO 新的IO包
+
+OS：Non-Blocking IO 非阻塞的IO
+
 - 非阻塞式的 `ServerSocketChannel`
   - `ss.configBlocking(false)` 设置非阻塞
-  - 在`accept(3,`中空转，要么返回client的描述符，要么返回-1
+  - 在`accept(3,`中空转，要么返回client的描述符，要么返回-1，如果拿到了新的连接，调用clientList.add()
 - 缺点
   - `ByteBuffer`只有一个指针，用起来有很多坑
   - NIO的存在的问题：C10K问题
 
-    - 放大：C10K当并发量很大的时候，文件描述符会很多，每循环一次，都要调用一次recv系统调用（复杂度O(n)），进行用户态到内核态的切换，切换时性能损耗大。
-    - 缩小：当C10K只有1个C发来了数据，只使用到了1个有用的系统调用，剩余n-1次的监听都是无效的
+    - 放大：C10K当并发量很大的时候，需要遍历的文件描述符会很多，**每循环 **一次，**都要调用 10K 次recv 系统调用**（复杂度O(n)），进行用户态到内核态的切换，性能损耗大。
+    - 缩小：你调用了 **那么多次 recv 系统调用**，但是如果 C10K 只有 1 个 Client 发来了数据，**只有 1 次系统调用是有效的**，剩余 n-1 次的监听都是无效的。我们希望，能够有一种方式，只需要调用 **有效** 的 **recv 系统调用** 就可以。
     
     
 
 ### 多路复用
 
-OS提供的多路复用器有 select, pool, epoll, kqueue 等，而 Java 把所有的多路复用器封装成了 Selector
+OS 提供的**多路复用器**有 `select`, `pool`, `epoll`, `kqueue` 等
+
+select，poll 的缺点是，每次你调用的时候，都需要将所有的 fds （文件描述符的集合）作为参数传递给函数，而 epoll 的优势是在内核中开辟了一个空间（调用的是 epoll_create）
+
+ Java 把所有的多路复用器封装成了 **Selector 类**
 
 可以在启动时，指定使用哪种多路复用器（默认优先选择 epoll），注意 windows 上是没有 epoll 的。
 
@@ -47,26 +56,29 @@ OS提供的多路复用器有 select, pool, epoll, kqueue 等，而 Java 把所�
 -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
 ```
 
-- Linux内核提供的`select`多路复用器返回给程序一个list，告诉程序哪些可以读取，然后程序要自己读取。这是同步模型。
+- Linux内核提供的 `select` 多路复用器，会返回给程序一个 list，告诉程序 **哪些 fd 是可以读/写的状态**，然后**程序要自己读取**，这是 IO 同步模型。
+
+  只有当 read 系统调用不需要你程序自己去做的时候，才属于异步的 IO，目前只有 windows iocp 实现了。
 
 - 缺点
+  
   - 如果有很多长连接，内核每次都要给程序传递很多连接对象
 
 
 
 ### epoll
 
-- epoll 也是多路复用器，但是它有一个**存放结果集的链表**，**它与 select / poll 的区别如下：**
+- epoll 也是多路复用器，但是它有一个 **存放结果集的链表**，**它与 select / poll 的区别如下：**
 
   - select：应用程什么时候调用 select，内核就什么时候遍历所有的文件描述符，修正 fd 的状态。
 
-  - epoll：应用程序在内核的红黑树中存放过一些fd，那么，内核基于中断处理完 fd 的 buffer/状态 之后，继续把有状态的 fd 拷贝到链表中。
+  - epoll：应用程序在内核的 **红黑树** 中存放过一些fd，那么，内核基于中断处理完 fd 的 buffer/状态 之后，继续把有状态的 fd 拷贝到链表中。
 
     即便应用程序不调用内核，内核也会随着中断，完成所有fd状态的设置。这样，程序调用`epoll_wait`可以及时去取链表包含中有状态的 fd 的结果集。规避了对于文件描述符的全量遍历。
 
     拿到 fd 的结果集之后，**程序需要自己取处理 accept / recv 等系统调用的过程**。所以`epoll_wait`依然是同步模型。
 
-- 它不负责读取IO，只关心返回结果
+- 它不负责读取 IO，只关心返回结果
 
 - Epoll是Event poll，把有数据这个事件通知给程序，还需要程序自己取读取数据
 
@@ -84,15 +96,23 @@ OS提供的多路复用器有 select, pool, epoll, kqueue 等，而 Java 把所�
     int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
     ```
 
-    l例如，在文件描述符`fd6`中，使用 `EPOLL_CTL_ADD` 添加服务器用于 listen 的文件描述符
+    例如，在文件描述符`fd6`中，使用 `EPOLL_CTL_ADD` 添加服务器用于 listen 的文件描述符
 
     - `int op` 可选参数：`EPOLL_CTL_ADD`, `EPOLL_CTL_MOD`, `EPOLL_CTL_DEL`
 
   - `epoll_wait` waits for I/O events, blocking the calling thread if no events are currently available.
 
-    **epoll_wait 不传递 fds，不触发内核遍历。**
+    **epoll_wait 不传递 fds，不触发内核遍历。**你的程序需要写一个死循环，一直调用 epoll_wait，可以设置阻塞，或者非阻塞
 
-- 早期在没有上述三个系统调用的时候，需要应用程序调用 mmap 来实现两端的内存共享提速，后期在 2.6 内核版本之后，提供了这些系统调用，就不需要 mmap 这种实现方式了。
+- 早期在没有上述三个系统调用的时候，需要应用程序调用 mmap 来实现两端的内存共享提速，后期在 2.6 内核版本之后，提供了这些系统调用，就不需要 mmap 这种实现方式了
+
+##### 边沿触发
+
+只要缓冲区还有东西可以读，只要你调用了epoll_wait函数，它就会继续通知你
+
+##### 水平触发
+
+就像高低电平一样，只有从高电平到低电平或者低电平到高电平时才会通知我们。只有客户端再次向服务器端发送数据时，epoll_wait 才会再返回给你
 
 
 
@@ -101,8 +121,8 @@ OS提供的多路复用器有 select, pool, epoll, kqueue 等，而 Java 把所�
 - AIO 是异步的模型
 - 使用的是 callback / hook / templateMethod 回调，是基于事件模型的 IO
 - Netty封装的是NIO，不是AIO
-  - AIO只有Window支持（内核中使用CompletionPort完成端口）
-  - 在Linux上的AIO只不过是对NIO的封装而已（是基于epoll的轮询）
+  - AIO 只有 Window 支持（内核中使用CompletionPort完成端口）
+  - 在 Linux 上的 AIO 只不过是对 NIO 的封装而已（是基于epoll 的轮询）
 
 “停止使用这种只适用于特殊情况的垃圾，让所有人都在乎的系统核心尽其所能地运行好其基本的性能”，就是说，你cpu做你cpu该做的事，别净整些没用的。。
 

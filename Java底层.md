@@ -49,8 +49,6 @@ typora-copy-images-to: /images/
 
   - HashMap, LinkedHashMap：多线程用 HashMap 要加锁
   - **ConcurrentHashMap**：CAS操作，多线程读取的效率非常高
-    - HashTable 之所以效率低是因为所有线程都必须竞争同一把锁，
-    - 假如容器里有多把锁，每一把锁用于锁容器的部分数据，那么多线程访问容器不同数据段的数据时，线程间就不会存在锁竞争，从而有效提高并发效率，这就是 ConcurrentHashMap 的锁分段技术。首先将数据分成 Segment 数据段，然后给每一个数据段配一把锁，当一个线程占用锁访问其中一个段的数据时，其他段的数据也能被其他线程访问。
   - TreeMap：不存在ConcurrentTreeMap，但为了排序，用跳表**ConcurrentSkipListMap**代替树结构
   - WeakHashMap
   - IdentityHashMap

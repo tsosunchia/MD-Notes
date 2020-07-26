@@ -481,22 +481,86 @@ JMM 存在一些天然的 happens-before 关系，无需任何同步器协助就
 
 为了遵循 as-if-serial，编译器和处理器不会对存在**数据依赖**关系的操作重排序，因为这种重排序会改变执行结果。但是如果操作之间不存在数据依赖关系，这些操作就可能被编译器和处理器重排序。
 
-**as-if-serial 保证单线程程序的执行结果不变，happens-before 保证正确同步的多线程程序的执行结果不变。**
+**as-if-serial 保证单线程程序的执行结果不变，happens-before 保证正确同步的多线程程序的执行结果不变。这两种语义的目的，都是为了在不改变程序执行结果的前提下尽可能提高程序执行并行度。**
 
-**这两种语义的目的，都是为了在不改变程序执行结果的前提下尽可能提高程序执行并行度。**
+
 
 #### JUC包下新的同步机制
 
-- CAS
+##### CAS
 
-  atomic 包里的类基本都是使用 Unsafe 实现的，Unsafe 只提供三种 CAS 方法：compareAndSwapInt、compareAndSwapLong 和 compareAndSwapObject，例如原子更新 Boolean 是先转成整形再使用 compareAndSwapInt 
+Compare And Swap (Compare And Exchange) / 自旋 / 自旋锁 / 无锁 （无重量锁）
 
-- AtomicInteger
+因为经常配合循环操作，直到完成为止，所以泛指一类操作
 
-  - getAndIncrement 以原子方式将当前的值加 1
-  - 首先，在 for 死循环中取得 AtomicInteger 里存储的数值
-  - 第二步，对 AtomicInteger 当前的值加 1 
-  - 第三步，调用 compareAndSet 方法进行原子更新，先检查当前数值是否等于 expect，如果等于则说明当前值没有被其他线程修改，则将值更新为 next，否则会更新失败返回 false，程序会进入 for 循环重新进行 compareAndSet 操作。
+cas(v, a, b) ，变量v，期待值a, 修改值b
+
+<img src="images/image-20200726152455721.png" alt="image-20200726152455721" style="zoom:50%;" />
+
+ABA问题：你的女朋友在离开你的这段儿时间经历了别的人，自旋就是你空转等待，一直等到她接纳你为止。
+
+ABA 问题的解决方式：加版本号（数值型 / bool 型）
+
+
+
+atomic 包里的类基本都是使用 Unsafe 实现的，Unsafe 只提供三种 CAS 方法：compareAndSwapInt、compareAndSwapLong 和 compareAndSwapObject，例如原子更新 Boolean 是先转成整形再使用 compareAndSwapInt 
+
+##### AtomicInteger 底层实现原理
+
+- `getAndIncrement()` 方法，实现以原子方式将当前的值加 1，实现原理：
+
+  1. 在 for 死循环中取得 AtomicInteger 里存储的数值
+
+  2. 对 AtomicInteger 当前的值加 1 
+
+  3. 调用 compareAndSet 方法进行原子更新，先检查当前数值是否等于 expect，如果等于则说明当前值没有被其他线程修改，则将值更新为 next，否则会更新失败返回 false，程序会进入 for 循环重新进行 compareAndSet 操作。
+
+     **源码级别的实现原理：**
+
+  - `getAndIncrement()`调用 Unsafe 类 `getAndAddInt(...)` 
+
+  - `getAndAddInt(...)` 调用 `this.compareAndSwapInt(...)`， native 方法， hotspot  cpp 实现
+
+  - 这个方法在 unsafe.cpp 中
+
+    ```c
+    UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapInt(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jint e, jint x))
+      UnsafeWrapper("Unsafe_CompareAndSwapInt");
+      oop p = JNIHandles::resolve(obj);
+      jint* addr = (jint *) index_oop_from_field_offset_long(p, offset);
+      return (jint)(Atomic::cmpxchg(x, addr, e)) == e; // 注意这里 cmpxchg
+    UNSAFE_END
+    ```
+
+  - `cmpxchg` 在 atomic.cpp 中，里面调用了另外一个 `cmpxchg` ，最后你回来到 atomic_linux_x86.inline.hpp ， **93行** `cmpxchg` ，用内联汇编的方式实现。
+
+    ```c
+    // atomic_linux_x86.inline.hpp
+    inline jint     Atomic::cmpxchg    (jint     exchange_value, volatile jint*     dest, jint     compare_value) {
+      int mp = os::is_MP(); // is_MP = Multi Processor 多处理器需要加锁
+      __asm__ volatile (LOCK_IF_MP(%4) "cmpxchgl %1,(%3)"
+                  : "=a" (exchange_value)
+                  : "r" (exchange_value), "a" (compare_value), "r" (dest), "r" (mp)
+                  : "cc", "memory");
+      return exchange_value;
+    }
+    ```
+
+    jdk8u: atomic_linux_x86.inline.hpp
+
+    ```c
+    #define LOCK_IF_MP(mp) "cmp $0, " #mp "; je 1f; lock; 1: "
+    ```
+
+    最终实现：cmpxchg ，相当于使用 CAS 的方法修改变量值，这个在 CPU 级别是有原语支持的。
+
+    ```asm
+    lock cmpxchg // 这个指令，在执行这条指令的过程中，是不允许被其他线程打断的
+    ```
+
+##### JUC 包下的一些用于同步的类
+
+- AtomicInteger，上面讲了
 
 - AtomicLong
 
@@ -543,6 +607,8 @@ JMM 存在一些天然的 happens-before 关系，无需任何同步器协助就
   - unpark 方法可以先于 park 方法执行，unpark 依然有效
   - 这两个方法的实现是由 Unsafe 类提供的，原理是操作线程的一个变量在0,1之间切换，控制阻塞和唤醒
   - AQS 就是调用这两个方法进行线程的阻塞和唤醒的。
+  
+  
 
 ##### AQS（AbstractQueuedSyncronizer）
 

@@ -277,7 +277,7 @@ public class TestThreadPool {
 
 #### syncronized
 
-​		给一个变量/一段代码加锁，线程拿到锁之后，才能修改一个变量/执行一段代码
+给一个变量/一段代码加锁，线程拿到锁之后，才能修改一个变量/执行一段代码
 
 - `wait()`
 - `notify()`
@@ -347,7 +347,7 @@ public class TestLock {
 - 保证线程的可见性
 - 禁止指令的重排序
 
-##### DCL单例要不要加volitile？
+##### DCL单例要不要加 volitile？
 
 需要。为了防止指令重排序导致拿到半初始化的变量。
 
@@ -411,7 +411,7 @@ JVM 为了优化指令，允许指令重排序，有可能按照 **1–>3–>2**
     - `Store语句1; StoreLoad屏障; Load语句2`
     - 在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。
 
-##### volitile的实现原理？
+##### volitile 的实现原理？
 
 - 字节码层面
   
@@ -552,7 +552,7 @@ atomic 包里的类基本都是使用 Unsafe 实现的，Unsafe 只提供三种 
     #define LOCK_IF_MP(mp) "cmp $0, " #mp "; je 1f; lock; 1: "
     ```
 
-    最终实现：cmpxchg ，相当于使用 CAS 的方法修改变量值，这个在 CPU 级别是有原语支持的。
+    最终实现：**cmpxchg** ，相当于使用 CAS 的方法修改变量值，这个在 CPU 级别是有原语支持的。
 
     ```asm
     lock cmpxchg // 这个指令，在执行这条指令的过程中，是不允许被其他线程打断的
@@ -628,41 +628,102 @@ AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它�
 
 偏向锁、自旋锁都是用户空间完成；重量级锁需要向内核申请
 
-- **偏向锁**
-  - syncronized
-  - 为了在没有竞争的情况下减少锁开销
-  - 偏向于第一个获得它的线程，**没有必要**设计**锁竞争机制**时，只是把第一个访问的`线程的id`写到`markword`中，而不去真正的加锁，如果在执行过程中锁一直没有被其他线程获取，则持有偏向锁的线程将不需要进行同步
+![image-20200726164025491](images/image-20200726164025491.png)
 
-<img src="images\lock1.png" alt="img" style="zoom:50%;" />
+##### 偏向锁
 
-- **CAS（也叫 自旋锁，无锁，轻量级锁）**
-  
-  - 在没有竞争的前提下减少重量级锁使用操作系统互斥量产生的性能消耗
-  
-  - 偏向锁时，有人来竞争锁了，现在操作系统把偏向锁撤销，进行**自旋锁（轻量级锁）竞争**。
-  
-    虚拟机将在当前线程的栈帧中建立一个锁记录空间，存储锁对象目前 Mark Word 的拷贝。
-  
-    虚拟机使用 CAS 尝试把对象的 Mark Word 更新为指向锁记录的指针，如果更新成功即代表该线程拥有了锁，锁标志位将转变为 00，表示处于轻量级锁定状态。
+- 普通对象加了 syncronized，会加上偏向锁。偏向锁默认是打开的，但是有一个时延，如果要观察到偏向锁，应该设定参数
+
+- 我们知道，StringBuffer 使用了 syncronized，但是大多数情况下，我们是在单线程的时候使用它的，**没有必要 **设计 **锁竞争机制**。
+
+  为了在没有竞争的情况下减少锁开销，偏向锁偏向于第一个获得它的线程，把第一个访问的 **线程 id** 写到 markword 中，而不去真正加锁。如果一直没有被其他线程竞争，则持有偏向锁的线程将不需要进行同步
+
+  默认情况，偏向锁有个时延，默认是4秒。why? 因为JVM虚拟机自己有一些默认启动的线程，里面有好多sync代码，这些sync代码启动时就知道肯定会有竞争，如果使用偏向锁，就会造成偏向锁不断的进行锁撤销和锁升级的操作，效率较低。
+
+  ```shell
+  -XX:BiasedLockingStartupDelay=0
+  ```
+
+  设定上述参数，new Object () - > 101 偏向锁 -> 线程ID为0 -> 匿名偏向 Anonymous BiasedLock ，指还没有偏向任何一个线程。打开偏向锁，new出来的对象，默认就是一个可偏向匿名对象101
+
+
+
+##### 轻量级锁（也叫 自旋锁 / 无锁 / CAS）
+
+- 偏向锁时，有人来竞争锁，操作系统把 **偏向锁撤销**，进行 **自旋锁（轻量级锁）竞争**。
+
+- 在没有竞争的前提下，减少 **重量级锁** 使用操作 **系统 mutex 互斥量** 产生的性能消耗
+
+  虚拟机在当前线程的栈帧中建立一个 **锁记录 Lock Record **空间，存储锁对象目前 Mark Word 的拷贝。
+
+  虚拟机使用 CAS 尝试把对象的 Mark Word 更新为指向锁记录的指针，如果更新成功即代表该线程拥有了锁，锁标志位将转变为 00，表示处于轻量级锁定状态。
   
 - 一种乐观锁：`cas(v, a, b)` 变量v，期待a，修改值b
-    - Java 中调用了 native 的 `conpareAndSwapXXX()` 方法
-    - 每个人在自己的线程内部生成一个自己LR（Lock Record锁记录），两个线程通过自己的方式尝试将 LR 写门上，竞争成功的开始运行，竞争失败的一直自旋等待。
-    - 实际上是汇编指令 `lock cmpxchg`，硬件层面实现：在操作过程中不允许被其他CPU打断，避免CAS在写数据的时候被其他线程打断，相比操作系统级别的锁，效率要高很多。
-     - 如何解决ABA问题？
-       - 基础数据类型即使出现了ABA，一般问题不大。
-       - 解决方式：加版本号，后面检查的时候连版本号一起检查。
-       - Atomic里面有个带版本号的类 `AtomicStampedReference`，目前还没有人在面试的时候遇到过。
     
-  - 线程始终得不到锁会自旋消耗 CPU
-  
-- **重量级锁**
-  
-  - 当必须加锁时，markword中记录的是objectmonitor（JVM用C++写的一个Object）
+- Java 中调用了 native 的 `conpareAndSwapXXX()` 方法
+
+- 每个人在自己的线程内部生成一个自己LR（Lock Record锁记录），两个线程通过自己的方式尝试将 LR 写门上，竞争成功的开始运行，竞争失败的一直自旋等待。
+
+- 实际上是汇编指令 `lock cmpxchg`，硬件层面实现：在操作过程中不允许被其他CPU打断，避免CAS在写数据的时候被其他线程打断，相比操作系统级别的锁，效率要高很多。
+
+ - 如何解决ABA问题？
+   - 基础数据类型即使出现了ABA，一般问题不大。
+   - 解决方式：加版本号，后面检查的时候连版本号一起检查。
+   - Atomic里面有个带版本号的类 `AtomicStampedReference`，目前还没有人在面试的时候遇到过。
+
+- 线程始终得不到锁会自旋消耗 CPU
 
 
 
+##### 重量级锁
 
+- 轻量级锁再竞争，升级为重量级锁
+- 重量级锁向 **Linux 内核** 申请锁 mutex， CPU从3级-0级系统调用，线程挂起，进入等待队列，等待操作系统的调度，然后再映射回用户空间。他有一个等待队列，不需要 CAS 消耗 CPU 时间。
+- 在 markword 中记录 ObjectMonitor，是 JVM 用 C++ 写的一个 Object
+
+<img src="images/image-20200726170539699.png" alt="image-20200726170539699" style="zoom: 67%;" />
+
+
+
+**自旋锁，什么时候升级为重量级锁？**
+
+竞争加剧：有线程超过10次自旋， -XX:PreBlockSpin， 或者自旋线程数超过CPU核数的一半， 1.6之后，加入自适应自旋 Adapative Self Spinning ， JVM自己控制，不需要你设置参数了。
+
+升级重量级锁：-> 向操作系统申请资源，linux mutex , CPU从3级-0级系统调用，线程挂起，进入等待队列，等待操作系统的调度，然后再映射回用户空间
+
+
+
+**为什么有自旋锁，还需要重量级锁？**
+
+自旋是消耗CPU资源的，如果锁的时间长，或者自旋线程多，CPU会被大量消耗
+
+重量级锁有等待队列，所有拿不到锁的进入等待队列，不需要消耗CPU资源
+
+
+
+**偏向锁，是否一定比自旋锁效率高？**
+
+不一定，在明确知道会有多线程竞争的情况下，偏向锁肯定会涉及锁撤销，这时候直接使用自旋锁
+
+例如，JVM 启动过程，会有很多线程竞争（明确知道，比如在刚启动的之后，肯定有很多线程要争抢内存的位置），所以，默认情况启动时不打开偏向锁，过一段儿时间再打开。
+
+
+
+#### 锁重入
+
+sychronized是可重入锁
+
+重入次数必须记录，因为要解锁几次必须得对应
+
+偏向锁、自旋锁，重入次数存放在线程栈，让LR + 1
+
+重量级锁 -> ? ObjectMonitor字段上
+
+**如果计算过对象的 hashCode，则对象无法进入偏向状态！**
+
+> 轻量级锁重量级锁的hashCode存在与什么地方？
+>
+> 答案：线程栈中，轻量级锁的LR中，或是代表重量级锁的ObjectMonitor的成员中
 
 ## JVM
 
@@ -692,21 +753,75 @@ AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它�
 
 #### 对象在内存中占用多少字节？
 
-经过试验，一个`Object o = new Object()` 是16字节
+查看一个对象的内存布局，工具：JOL = Java Object Layout
 
-- 8 字节（对象头 MarkWord，它的大小是固定的）
-- 4 字节（开启压缩时的对象指针 ClassPointer）
-- 4 字节 padding（对齐，要被 8 整除）
+```xml
+<dependencies>
+    <!-- https://mvnrepository.com/artifact/org.openjdk.jol/jol-core -->
+    <dependency>
+        <groupId>org.openjdk.jol</groupId>
+        <artifactId>jol-core</artifactId>
+        <version>0.9</version>
+    </dependency>
+</dependencies>
+```
+
+```java
+System.out.println(ClassLayout.parseInstance(o).toPrintable());
+```
+
+经过试验，一个`Object o = new Object();`  是16字节，（下图是小端）
+
+![image-20200726163105450](images/image-20200726163105450.png)
+
+添加 `syncronized(o){ sout ... }` 之后：下面 00 表示轻量级锁，因为偏向锁未启动，直接升级为了轻量级锁
+
+![image-20200726164847256](images/image-20200726164847256.png)
+
+- **8 字节（对象头 MarkWord，它的大小是固定的）**
+- **4 字节（开启压缩时的对象指针 ClassPointer）**
+- **4 字节 padding（对齐，要被 8 整除）**
+
+
 
 #### 对象头 MarkWord 包括什么？
 
 MarkWord 里面包括：锁信息、HashCode、GC信息。
 
-JDK8 对象的 MarkWord 布局如下：
+jdk8u: markOop.hpp 中，详细的说明了 markword 的布局。理解即可，无需背过。
 
-<img src="images/objecthead.png" style="zoom: 70%;" />
+```
+// Bit-format of an object header (most significant first, big endian layout below):
+//
+//  32 bits:
+//  --------
+//             hash:25 ------------>| age:4    biased_lock:1 lock:2 (normal object)
+//             JavaThread*:23 epoch:2 age:4    biased_lock:1 lock:2 (biased object)
+//             size:32 ------------------------------------------>| (CMS free block)
+//             PromotedObject*:29 ---------->| promo_bits:3 ----->| (CMS promoted object)
+//
+//  64 bits:
+//  --------
+//  unused:25 hash:31 -->| unused:1   age:4    biased_lock:1 lock:2 (normal object)
+//  JavaThread*:54 epoch:2 unused:1   age:4    biased_lock:1 lock:2 (biased object)
+//  PromotedObject*:61 --------------------->| promo_bits:3 ----->| (CMS promoted object)
+//  size:64 ----------------------------------------------------->| (CMS free block)
+//
+//  unused:25 hash:31 -->| cms_free:1 age:4    biased_lock:1 lock:2 (COOPs && normal object)
+//  JavaThread*:54 epoch:2 cms_free:1 age:4    biased_lock:1 lock:2 (COOPs && biased object)
+//  narrowOop:32 unused:24 cms_free:1 unused:4 promo_bits:3 ----->| (COOPs && CMS promoted object)
+//  unused:21 size:35 -->| cms_free:1 unused:7 ------------------>| (COOPs && CMS free block)
+```
+
+总结 JDK8 中对象的 MarkWord 布局如下（64 位，也就是 8 字节）：
+
+要看加的是什么锁的话，先看 markword 的最低两位，是 01 / 00 / 10 / 11
+
+![image-20200726163848419](images/image-20200726163848419.png)
 
 为什么 GC 年龄默认为 15？因为分代年龄只有 4 bit，可以表示最大的数就是 15
+
+
 
 #### 对象怎么定位？
 

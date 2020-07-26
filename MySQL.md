@@ -4,39 +4,39 @@ typora-copy-images-to: /images/
 
 # MySQL
 
-##### log 有多少种？
+#### log 有多少种？
 
 ​		binlog, undolog, redolog, relaylog, errorlog, slowlog 等
 
-##### log 有多少种？
+#### log 有多少种？
 
 ​		binlog, undolog, redolog, relaylog, errorlog, slowlog 等
 
 ​		所有存储引擎都有binlog，errorlog，relaylog，slowlog
 
-**redolog**
+#### **redolog**
 
 ​		固定大小，循环写，两阶段提交
 
-##### undolog是否需要落盘？
+#### undolog是否需要落盘？
 
 ​		
 
-##### 事务是怎么实现的？
+#### 事务是怎么实现的？
 
 ​		事务中的所有操作作为一个整体，像原子一样不可分割（原子性），通过undolog 回滚日志实现
 
-##### 持久性是怎么实现的？
+#### 持久性是怎么实现的？
 
 ​		持久性通过redolog和binlog共同保证。
 
 ​		事务提交前，只需要将redolog持久化，不需要将数据持久化。系统崩溃时，系统可以根据redolog中的内容，将数据恢复到最新状态。
 
-##### MVCC
+#### MVCC
 
 ​		multi version concurrency control，多版本并发控制
 
-##### MySQL有多少种锁？
+#### MySQL有多少种锁？
 
 ​		共享锁，排它锁，独占锁，间隙锁，临键锁，自增锁，意向锁
 
@@ -46,11 +46,11 @@ typora-copy-images-to: /images/
 
 ​		共享锁怎么加？lock in share mode
 
-##### WAL
+#### WAL
 
-​		Write Ahead Log溢写日志
+​		Write Ahead Log 溢写日志
 
-##### 自定义变量的使用
+#### 自定义变量的使用
 
 ​		在给一个变量赋值的同时，使用这个变量
 
@@ -58,7 +58,7 @@ typora-copy-images-to: /images/
 select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 ```
 
-##### 分区表
+#### 分区表
 
 ​		创建表时使用partition by子句定义每个分区存放的数据，在执行查询的时候，优化器会根据分区定义过滤那些没有我们需要数据的分区，这样查询就无须扫描所有分区。
 
@@ -77,6 +77,10 @@ select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 - memory
   - 数据在内存中，有持久化文件
   - 默认使用哈希索引
+
+
+
+
 
 ### 事务
 
@@ -109,16 +113,18 @@ select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 
 
 
+
+
 ### 锁
 
-##### MyIsam
+#### MyIsam
 
 只能锁表
 
 - 共享读锁
 - 独占写锁
 
-##### Innodb
+#### Innodb
 
 支持表锁，行锁。实质上锁的是索引，如果没有索引的话，退化成为表锁。
 

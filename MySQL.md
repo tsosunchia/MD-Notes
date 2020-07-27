@@ -4,63 +4,47 @@ typora-copy-images-to: /images/
 
 # MySQL
 
-#### log 有多少种？
-
-​		binlog, undolog, redolog, relaylog, errorlog, slowlog 等
+### 零碎知识点
 
 #### log 有多少种？
 
-​		binlog, undolog, redolog, relaylog, errorlog, slowlog 等
+binlog, undolog, redolog, relaylog, errorlog, slowlog 等
 
-​		所有存储引擎都有binlog，errorlog，relaylog，slowlog
+所有存储引擎都有 binlog，errorlog，relaylog，slowlog
 
-#### **redolog**
 
-​		固定大小，循环写，两阶段提交
 
 #### undolog是否需要落盘？
 
 ​		
 
-#### 事务是怎么实现的？
-
-​		事务中的所有操作作为一个整体，像原子一样不可分割（原子性），通过undolog 回滚日志实现
-
-#### 持久性是怎么实现的？
-
-​		持久性通过redolog和binlog共同保证。
-
-​		事务提交前，只需要将redolog持久化，不需要将数据持久化。系统崩溃时，系统可以根据redolog中的内容，将数据恢复到最新状态。
-
-#### MVCC
-
-​		multi version concurrency control，多版本并发控制
-
 #### MySQL有多少种锁？
 
-​		共享锁，排它锁，独占锁，间隙锁，临键锁，自增锁，意向锁
+共享锁，排它锁，独占锁，间隙锁，临键锁，自增锁，意向锁
 
-​		MVCC：multi version concurrency control 多版本并发控制
+MVCC：multi version concurrency control 多版本并发控制，通过保存数据在某个时间点的快照来实现的。在同一个事务里能够看到数据一致的视图。
 
-​		排它锁怎么加？query for update
+排它锁怎么加？query for update
 
-​		共享锁怎么加？lock in share mode
+共享锁怎么加？lock in share mode
 
-#### WAL
+WAL：Write Ahead Log 溢写日志
 
-​		Write Ahead Log 溢写日志
 
-#### 自定义变量的使用
 
-​		在给一个变量赋值的同时，使用这个变量
+#### 使用自定义变量
+
+在给一个变量赋值的同时，使用这个变量
 
 ```mysql
 select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 ```
 
+
+
 #### 分区表
 
-​		创建表时使用partition by子句定义每个分区存放的数据，在执行查询的时候，优化器会根据分区定义过滤那些没有我们需要数据的分区，这样查询就无须扫描所有分区。
+创建表时使用partition by子句定义每个分区存放的数据，在执行查询的时候，优化器会根据分区定义过滤那些没有我们需要数据的分区，这样查询就无须扫描所有分区。
 
 
 
@@ -84,32 +68,49 @@ select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 
 ### 事务
 
-- Spring事务和数据库事务有什么区别？
-- 隔离级别
-  - 能够模拟脏读、幻读、不可重复读的情况
+##### Spring事务和数据库事务有什么区别？
 
-<img src="images/20200622212043729.png" alt="img" style="zoom:67%;" />
+Spring提供了一个类，由这个类以AOP的方式管理，只需要`@Transactional`即可
 
-- ACID
-  - Atomicity 原子性
-    - 事务必须是一个原子的操作序列单元
-    - 使用 undolog 逻辑日志实现
-  - Consistency 一致性
-    - **事务的执行**不能破坏**数据库数据**的完整性和一致性
-    - 事务执行的结果必须使数据库从**一个一致性状态**转变到**另一个一致性状态**
-    - 如果事务被迫中断，不应该有一部分被写入物理数据库
-  - Isolation 隔离性
-    - 锁机制
-    - 并发环境中，并发的事务是相互隔离的，并发执行的事务之间不能相互干扰
-    - 隔离级别：假设A，B都开启了事务
-      - 读未提交（未授权读取）：即使A事务未提交，B事务也能看到A的修改
-      - 读已提交（授权读取）：A事务提交后，B事务中才能看到A的修改
-      - 可重复读：无论A怎么修改，事务B在事务期间都不会看到A的修改
-      - 串行化：所有事物只能一个接一个处理，不能并发执行
-  - Durability 持久性
-    - 事务一旦提交，数据必须永久保存
-    - 即使宕机，重启后也能恢复到事务成功结束时的状态
-    - redolog
+
+
+
+
+### 事务的 ACID
+
+#### Atomicity 原子性
+
+- 事务中的所有操作作为一个整体，像原子一样不可分割（原子性）
+- 使用 undolog 逻辑日志实现回滚
+
+#### Consistency 一致性
+
+- **事务的执行**不能破坏**数据库数据**的完整性和一致性
+- 事务执行的结果必须使数据库从**一个一致性状态**转变到**另一个一致性状态**
+- 如果事务被迫中断，不应该有一部分被写入物理数据库
+
+#### Isolation 隔离性
+
+- 使用锁机制
+- 并发环境中，并发的事务是相互隔离的，并发执行的事务之间不能相互干扰
+- 隔离级别：假设 A，B 都开启了事务
+  - 读未提交（未授权读取）：即使A事务未提交，B事务也能看到A的修改
+  - 读已提交（授权读取）：A事务提交后，B事务中才能看到A的修改
+  - 可重复读：无论A怎么修改，事务B在事务期间都不会看到A的修改
+  - 串行化：所有事物只能一个接一个处理，不能并发执行
+  
+  （要能够模拟脏读、幻读、不可重复读的情况）
+  
+  <img src="images/20200622212043729.png" alt="img" style="zoom:75%;" />
+
+#### Durability 持久性
+
+持久性通过 redolog 和 binlog 共同保证。
+
+- 事务一旦提交，数据必须永久保存
+- 即使宕机，重启后也能恢复到事务成功结束时的状态
+- 使用 redolog 两阶段提交实现。事务提交前，需要将 redolog 持久化。系统崩溃时，虽然数据没有持久化，但是可以根据 redolog 的内容，将数据恢复到最新的状态。
+- redolog 大小是固定的，相当于一个增量存储，redolog 满了之后，会进行持久化的同步归档。然后将redolog清空。
 
 
 
@@ -130,3 +131,85 @@ select actor_id, @rounum:=@rownum+1 as rownum from actor limit 10;
 
 - 共享锁（s），又称读锁
 - 排它锁（x），又称写锁
+
+
+
+### 索引实现原理
+
+Memory 存储引擎使用 Hash 索引。
+
+Innodb 默认使用 B-tree，根据官网文档，Memory tables 也支持哈希索引。
+
+Hash劣势：rehash，哈希冲突问题。不好的hash算法导致散列不均匀，浪费磁盘空间。
+
+jdk 1.8 的哈希函数算法使用了扰动函数，也是为了让散列更均匀
+
+| **索引**      | MyISAM引擎 | InnoDB引擎 | Memory引擎 |
+| ------------- | ---------- | ---------- | ---------- |
+| B-Tree索引    | 支持       | 支持       | 支持       |
+| HASH索引      | 不支持     | 不支持     | 支持       |
+| R-Tree索引    | 支持       | 不支持     | 不支持     |
+| Full-text索引 | 支持       | 不支持     | 不支持     |
+
+
+
+#### B 树
+
+![img](images/20200516205041228.png)
+
+
+
+#### B+ 树
+
+每个节点可以包含多个元素。
+
+非叶子结点只存储 key，不存储数据。所有 **数据都放在叶子结点** 中存储。
+
+![img](images/20200516205736443.png)
+
+
+
+
+
+### 索引分类
+
+#### 1、按照索引的存储来划分：簇族索引、非簇族索引
+
+##### 聚簇索引
+
+innodb，数据和索引放在一起。如果不设置主键，innodb会选择一个唯一键，如果没有唯一键，innodb会生成一个6字节的rowid存储，对用户是不可见的。
+
+##### 非聚簇索引
+
+数据和索引不放在一起，myisam
+
+
+
+#### 2、按照使用来分：
+
+**主键索引**：主键所关联的数据
+
+**唯一索引**：mysql 默认会给唯一键添加索引
+
+**普通索引**
+
+
+
+
+
+### 回表 & 覆盖索引
+
+回表：通过普通索引去树中查找 **返回主键值**，再 **根据主键 **去索引树查找数据。
+
+```sql
+select id, age from test where name = '张三';
+```
+
+
+
+覆盖索引：执行计划能看到 using index。通过检索索引就可以读取想要的数据，那就不需要再到数据表中读取行了。也就是不需要回表。
+
+```sql
+select id, name from test where name = '张三';
+```
+

@@ -57,6 +57,7 @@ typora-copy-images-to: /images/
 
 ```java
 Ideally, under random hashCodes, the frequency of nodes in bins follows a Poisson distribution with a parameter of about 0.5 on average for the default resizing threshold of 0.75, although with a large variance because of resizing granularity. Ignoring variance, the expected occurrences of list size k are (exp(-0.5) * pow(0.5, k) / factorial(k)). The first values are:
+理想情况下，在随机哈希码下，bin中节点的频率遵循泊松分布，参数平均约为0.5，默认大小调整阈值为0.75，尽管由于粒度调整的原因方差很大。忽略方差，列表大小k的期望出现次数为(exp(-0.5) * pow(0.5, k) / factorial(k))。第一个值是:
       0:    0.60653066
       1:    0.30326533
       2:    0.07581633
@@ -69,7 +70,7 @@ Ideally, under random hashCodes, the frequency of nodes in bins follows a Poisso
       more: less than 1 in ten million
 ```
 
-理想情况下，在随机哈希码下，哈希表中节点的频率遵循泊松分布，而根据统计，忽略方差，列表长度为K的期望出现的次数是以上的结果，可以看到其实在为8的时候概率就已经很小了，再往后调整并。
+理想情况下，在随机哈希码下，哈希表中节点的频率遵循泊松分布，而根据统计，忽略方差，列表长度为K的期望出现的次数是以上的结果，可以看到其实在为8的时候概率就已经很小了，再往后调整意义并不大。
 
 ### 扩容原理
 
@@ -80,3 +81,51 @@ Ideally, under random hashCodes, the frequency of nodes in bins follows a Poisso
 初始容量为 2 的 n 次幂：为了方便进行按位与的取模运算，计算下标位置
 
 <img src="images/image-20200727001852130.png" alt="image-20200727001852130" style="zoom: 50%;" />
+
+
+
+
+
+![jdk8 hashmap的put操作](images/jdk8 hashmap的put操作.jpg)
+
+
+
+## ConcurrentHashMap
+
+几个参数：
+
+- 默认大小：16
+- 负载因子：0.75
+- 默认并发级别：16
+- put 方法调用的是 Unsafe 类的 CAS 操作
+
+#### 结构变化：
+
+<img src="images/image-20200727170620298.png" alt="image-20200727170620298" style="zoom: 49%;" />
+
+
+
+<img src="images/image-20200727170648898.png" alt="image-20200727170648898" style="zoom:50%;" />
+
+ConcurrentHashMap 使用 **锁分段技术**，将数据分成一段一段的存储，给每一段数据配一把锁。一个线程访问其中一个段数据时，其他段数据能被其他线程访问。
+
+有些方法需要跨段，比如size()和containsValue()，它们可能需要锁定整个表而而不仅仅是某个段，这需要**按顺序**锁定所有段，操作完毕后，又**按顺序**释放所有段的锁。这里“按顺序”是很重要的，否则极有可能出现死锁。
+
+
+
+**Hashtable** 的任何操作都会把整个表锁住，是阻塞的。
+
+好处：能获取最实时的更新，比如说线程A调用putAll写入大量数据，期间线程B调用get，线程B就会被阻塞，直到线程A完成putAll，因此线程B肯定能获取到线程A写入的完整数据。
+
+坏处：是所有调用都要排队，效率较低。
+
+**ConcurrentHashMap** 是设计为非阻塞的。在更新时会局部锁住某部分数据，但不会把整个表都锁住。同步读取操作则是完全非阻塞的。
+
+好：处是在保证合理的同步前提下，效率很高。
+
+坏处：是严格来说读取操作不能保证反映最近的更新。
+
+例如线程A调用putAll写入大量数据，期间线程B调用get，则只能get到目前为止已经顺利插入的部分数据。
+
+
+

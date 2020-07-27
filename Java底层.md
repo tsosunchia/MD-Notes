@@ -45,9 +45,10 @@ typora-copy-images-to: /images/
 
 - Map
 
-  早期的 Vector 和 Hashtable 都自带锁，设计上有不完善的地方，基本上不用
+  早期的 Vector 和 **Hashtable** 都自带锁，设计上有不完善的地方，基本上不用
 
-  - HashMap, LinkedHashMap：多线程用 HashMap 要加锁
+  - **HashMap**, LinkedHashMap：多线程用 HashMap 要加锁
+  - **Hashtable**：自带 synchronized，线程安全，但在线程竞争激烈的情况下效率非常低下
   - **ConcurrentHashMap**：CAS操作，多线程读取的效率非常高
   - TreeMap：不存在ConcurrentTreeMap，但为了排序，用跳表**ConcurrentSkipListMap**代替树结构
   - WeakHashMap
@@ -659,7 +660,7 @@ AQS 队列同步器是用来构建锁或其他同步组件的基础框架，它�
   虚拟机使用 CAS 尝试把对象的 Mark Word 更新为指向锁记录的指针，如果更新成功即代表该线程拥有了锁，锁标志位将转变为 00，表示处于轻量级锁定状态。
   
 - 一种乐观锁：`cas(v, a, b)` 变量v，期待a，修改值b
-    
+  
 - Java 中调用了 native 的 `conpareAndSwapXXX()` 方法
 
 - 每个人在自己的线程内部生成一个自己LR（Lock Record锁记录），两个线程通过自己的方式尝试将 LR 写门上，竞争成功的开始运行，竞争失败的一直自旋等待。

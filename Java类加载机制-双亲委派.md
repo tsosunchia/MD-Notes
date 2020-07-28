@@ -8,12 +8,14 @@ typora-copy-images-to: /images/
 
 ### 类加载机制，类加载的过程？
 
-1. class loading：JVM 把描述类的数据从 Class 文件加载到内存中
-2. class linking
+<img src="images/image-20200727215050821.png" alt="image-20200727215050821" style="zoom:87%;" />
+
+1. class loading 加载：JVM 把描述类的数据从 Class 文件加载到内存中
+2. class linking 连接
    1. verification：校验装进来的 class 文件是否符合标准，比如 `CA FE BA BE`
    2. preparation：将 class 文件的静态变量赋默认值（不是初始值）
    3. resolution：把 class 文件常量池中用到的符号引用，转换为直接内存地址可以直接访问到的内容
-3. class initializing：静态变量这时候才会赋初始值
+3. class initializing 初始化：静态变量这时候才会赋初始值
 4. 申请对象内存
 5. 成员变量赋默认值
 6. 调用构造方法
@@ -23,9 +25,11 @@ typora-copy-images-to: /images/
 
 
 
-### 双亲委派机制
+### 双亲委派机制（parent的翻译问题，实际上是父类委派机制）
 
 不同的类加载器加载不同的 class。双亲委派机制是一个递归：
+
+<img src="images/image-20200727215909999.png" alt="image-20200727215909999" style="zoom:50%;" />
 
 1. 子类先委托父类加载
 2. 父类加载器有自己的**加载范围**，范围内没有找到，则不加载，并返回给子类
@@ -35,14 +39,14 @@ typora-copy-images-to: /images/
 
 主要为了安全。如果任何一个 class 都可以把它 load 到内存的话，那我就可以自定义一个 java.lang.string 类，交给自定义的 ClassLoader，把这个我自己的 string 类打包给客户，它被 load 进内存，然后客户把密码存储成 String 类型对象，我偷摸把密码发给自己，这样就不安全了。
 
-##### Bootstrap ClassLoader
+##### Bootstrap ClassLoader 启动类加载器
 
 - C++实现
 - 加载 <JAVA_HOME>/lib下的类，是 jdk 最核心的内容，例如 rt.jar, charset.jar
 
 - 加载路径：sun.boot.class.path
 
-##### Extension ClassLoader
+##### Extension ClassLoader 扩展类加载器
 
 - Java 实现
 
@@ -50,7 +54,7 @@ typora-copy-images-to: /images/
 
 - 加载路径：java.ext.dirs
 
-##### Application ClassLoader
+##### Application ClassLoader 系统类加载器
 
 - 我们写的代码默认就是由它来加载
 
@@ -58,7 +62,7 @@ typora-copy-images-to: /images/
 
 - 加载路径：java.class.path
 
-##### 自定义ClassLoader
+##### User ClassLoader 用户自定义加载器
 
 - 加载自己定义的加载器
 

@@ -28,7 +28,7 @@ typora-copy-images-to: /images/
 
 Java：New IO 新的IO包
 
-OS：Non-Blocking IO 非阻塞的IO
+OS：Non-Blocking IO 非阻塞的 IO
 
 - 非阻塞式的 `ServerSocketChannel`
   - `ss.configBlocking(false)` 设置非阻塞

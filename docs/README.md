@@ -1,4 +1,4 @@
-# MD-Notes：后端开发笔记总结
+# MD-Notes：后端笔记总结
 
 **笔记持续更新中 ~** 
 
@@ -194,8 +194,16 @@ ln -s /usr/local/node/node-v14.15.3-linux-x64/bin/node /usr/local/bin/node
 # 安装成功，查看版本
 npm -v
 
-###### 安装docsify ######
+###### windows安装docsify ######
 npm i docsify-cli -g
+# 初始化目录
+docsify init ./docs
+# 启动一个本地服务器，可以方便地实时预览效果。默认访问地址 http://localhost:3000
+docsify serve docs
+
+###### 若在linux部署，不需要安装docsify，只需将服务器的访问根目录设定为 index.html 文件 ######
+# 修改nginx配置后，reload一下
+./nginx -s reload
 ```
 
 

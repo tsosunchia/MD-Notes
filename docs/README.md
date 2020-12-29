@@ -170,7 +170,7 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 文档结构
 
-<img src="images/image-20201229145404612.png" alt="image-20201229145404612" style="zoom: 50%;" />
+<img src="images/image-20201229145404612.png" alt="image-20201229145404612" style="zoom: 30%;" />
 
 ##### 1、用docsify搭建文档类型网站
 
@@ -183,16 +183,19 @@ docsify官方文档：https://docsify.js.org/#/zh-cn/
 
 部署到服务器步骤：
 
-```
-#### 安装npm ####
+```shell
+###### 安装npm ######
+# 淘宝镜像，下载node，解压
 wget https://npm.taobao.org/mirrors/node/latest-v14.x/node-v14.15.3-linux-x64.tar.gz
 tar -zxvf node-v14.15.3-linux-x64.tar.gz
 # 添加软链接
 ln -s /usr/local/node/node-v14.15.3-linux-x64/bin/npm /usr/local/bin/npm
 ln -s /usr/local/node/node-v14.15.3-linux-x64/bin/node /usr/local/bin/node
+# 安装成功，查看版本
+npm -v
 
-#### 安装docsify ####
-
+###### 安装docsify ######
+npm i docsify-cli -g
 ```
 
 

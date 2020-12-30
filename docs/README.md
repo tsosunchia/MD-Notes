@@ -36,6 +36,8 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 [1.8 Spring原理](/notes/1.8-Spring原理)：IOC，AOP原理
 
+[1.9 JVM调优实战](/notes/1.9-JVM调优实战)：JVM 常用命令参数，CPU内存飙高，生产环境OOM排查方法
+
 [2.1 MySQL](/notes/2.1-MySQL)：MySQL 基本架构，各种log，存储引擎，锁，事务，索引实现原理，索引下推
 
 [3.1 Redis](/notes/3.1-Redis)：数据类型，内存模型，AOF/RDB持久化，缓存击穿/缓存穿透/缓存雪崩，Redis集群，AKF拆分原则，一致性哈希算法
@@ -94,27 +96,35 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 ## 数据结构
 
-[排序](/notes/数据结构/排序)
+[1-排序](/notes/数据结构/排序)
 
-[树](/notes/数据结构/树)
+[2-树](/notes/数据结构/树)
 
-[搜索结构](/notes/数据结构/搜索结构)
+[3-搜索结构](/notes/数据结构/搜索结构)
 
-[图](/notes/数据结构/图)
+[4-图](/notes/数据结构/图)
 
 
 
 ## Linux运维
 
-[Linux云计算&安全方向](/notes/Linux运维/Linux云计算&安全方向)
+[1-运维职责是什么](/notes/Linux运维/1-运维职责是什么)
+
+[2-服务器硬件](/notes/Linux运维/2-服务器硬件)
 
 
+
+## P8架构
+
+[1-架构理论](/notes/P8架构/1-架构理论)
+
+[2-etcd集群环境搭建](/notes/P9架构/2-etcd集群环境搭建)
 
 
 
 ## 面试题汇总
 
-[2019java面试分模块总结](/notes/面试题/2019java面试分模块总结)
+[2019Java面试分模块总结](/notes/面试题/2019java面试分模块总结)
 
 [2019阿里淘系面试](/notes/面试题/2019阿里淘系面试)
 
@@ -214,9 +224,9 @@ docsify serve docs
 
 ##### 2、参考
 
-Github上别人的一篇不错的 Java 总结
+Github上别人的一篇不错的 Java 总结：[Java Giude](https://snailclimb.gitee.io/javaguide/#/?id=java)
 
-[Java Giude](https://snailclimb.gitee.io/javaguide/#/?id=java)
+在线图片压缩网站：https://www.bejson.com/ui/compress_img/
 
 ##### 3、待完善
 

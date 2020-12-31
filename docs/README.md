@@ -62,8 +62,6 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 [10.1-其它](/notes/10.1-其它)：零碎资料
 
-[10.2-架构理论](/notes/10.2-架构理论)：P8架构师
-
 [](/notes/)
 
 [](/notes/)
@@ -116,11 +114,17 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 ## P8架构
 
-[1-架构理论](/notes/P8架构/1-架构理论)
+[1-架构理论](/notes/P8架构/1-架构理论)：缓冲、缓存、复用、分治、亲密性、技术选型，从过去到未来
 
-[2-etcd集群环境搭建](/notes/P9架构/2-etcd集群环境搭建)
+[2-模板机封装](/notes/P8架构/2-模板机封装)：集群搭建：CentOS 7 模板机封装、配置静态 IP、简单优化
 
+[2-etcd集群环境搭建](/notes/P8架构/2-etcd集群环境搭建)：什么是 etcd，etcd集群搭建，容易出现的问题
 
+[3-分布式锁多种实现](/notes/P8架构/3-分布式锁多种实现)：基于 MySQL/Redis/zookeeper/etcd 的多种分布式锁实现原理
+
+[4-美团leaf分布式id解决方案](/notes/P8架构/4-美团leaf分布式id解决方案)：美团 Leaf 分布式 ID 生成器部署过程
+
+[4-zookeeper集群搭建](/notes/P8架构/4-zookeeper集群搭建)：主机规划（3台），Java 环境安装与配置，zookeeper 集群搭建与运行
 
 ## 面试题汇总
 

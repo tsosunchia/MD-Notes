@@ -10,9 +10,9 @@
 
 
 
-Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/HanquanHq/MD-Notes)，喜欢的话，可以给个 star 噢~
+Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/HanquanHq/MD-Notes)，喜欢的话，别忘了给个 star 噢~
 
-CSDN博客地址：https://hanquan.blog.csdn.net/
+CSDN 博客地址：https://hanquan.blog.csdn.net/
 
 
 
@@ -114,11 +114,13 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 ## P8架构
 
-[1-架构理论](/notes/P8架构/1-架构理论)
+[1-架构理论](/notes/P8架构/1-架构理论)：缓冲、缓存、复用、分治、亲密性、技术选型，从过去到未来
 
 [2-etcd集群环境搭建](/notes/P9架构/2-etcd集群环境搭建)
 
+[2-etcd集群环境搭建](/notes/P9架构/2-etcd集群环境搭建)
 
+4-美团leaf分布式id解决方案
 
 ## 面试题汇总
 

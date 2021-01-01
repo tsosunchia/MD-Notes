@@ -1,18 +1,26 @@
 # MD-Notes：后端笔记总结
 
-**笔记持续更新中 ~** 
+##### 关于 MD-Notes：
 
-- 面向后端开发攻城狮
-- 各种基础知识，包括计组、计网、数据结构、Java、MySQL、Redis、k8s、zk 等等
-- 操作系统
-- Linux运维
-- 面试题汇总
+业余时间学习技术的同时，做一些记录和总结并乐于分享。
 
+日常主要接触 Web 前后端开发、Linux 运维等，有 Java / Python 后端经验，熟练运用 MySQL，Redis，Zookeeper 及常用前后端框架 Vue，Spring，Flask 等，熟悉自动化运维工具 Docker, Kubernetes 等。
 
-
-Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/HanquanHq/MD-Notes)，喜欢的话，可以给个 star 噢~
+希望踏实走技术路线，对业务、架构以及技术的底层知识做一些更深入的研究。
 
 CSDN博客地址：https://hanquan.blog.csdn.net/
+
+Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/HanquanHq/MD-Notes)
+
+**笔记持续更新中！喜欢的话，可以给个 star 噢 ~~** 
+
+- 面向后端开发攻城狮
+- 各种基础知识，包括计组、计网、Java、MySQL、Redis、k8s、zk 等等
+- 操作系统
+- 数据结构
+- Linux运维
+- P8架构
+- 面试题汇总
 
 
 
@@ -62,10 +70,6 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 [10.1-其它](/notes/10.1-其它)：零碎资料
 
-[](/notes/)
-
-[](/notes/)
-
 
 
 ## 操作系统
@@ -94,6 +98,8 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 ## 数据结构
 
+会砌猪圈的泥瓦匠学完数据结构，就会盖个双层小楼啦~
+
 [1-排序](/notes/数据结构/排序)
 
 [2-树](/notes/数据结构/树)
@@ -106,13 +112,19 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 ## Linux运维
 
+学习记录 Linux 系统运维工作心得，让 Linux 学习从此不再晦涩难懂！
+
 [1-运维职责是什么](/notes/Linux运维/1-运维职责是什么)
 
 [2-服务器硬件](/notes/Linux运维/2-服务器硬件)
 
+[3-Linux系统](/notes/Linux运维/3-Linux系统)
+
 
 
 ## P8架构
+
+P8 架构师究竟要掌握什么样的技术水平？
 
 [1-架构理论](/notes/P8架构/1-架构理论)：缓冲、缓存、复用、分治、亲密性、技术选型，从过去到未来
 
@@ -125,6 +137,16 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 [4-美团leaf分布式id解决方案](/notes/P8架构/4-美团leaf分布式id解决方案)：美团 Leaf 分布式 ID 生成器部署过程
 
 [4-zookeeper集群搭建](/notes/P8架构/4-zookeeper集群搭建)：主机规划（3台），Java 环境安装与配置，zookeeper 集群搭建与运行
+
+[5-分布式ID业界解决方案](/notes/P8架构/5-分布式ID业界解决方案)：基于UUID，基于DB数据库多种模式，基于Redis，基于ZK、etcd，基于SnowFlake，美团Leaf，百度uid-generator
+
+[6-ES和Redis环境安装与配置](/notes/P8架构/6-ES和Redis环境安装与配置)：IDC机房和P8架构中硬件设备选购案例；搭建ES环境P8集群架构；Redis cluster集群搭建（单主机3主3从，主机配置2C4G）
+
+[](/notes/P8架构/)
+
+[](/notes/P8架构/)
+
+
 
 ## 面试题汇总
 
@@ -178,61 +200,48 @@ CSDN博客地址：https://hanquan.blog.csdn.net/
 
 
 
-
-
 ---
 
-# 关于 MD-Notes
+# 关于本 MD-Notes 的部署
 
-文档结构
+docsify 可以快速帮你生成文档网站。不同于 GitBook、Hexo 的地方是它不会生成静态的 .html 文件，所有转换工作都是在运行时。如果你想要开始使用它，只需要创建一个 index.html 就可以开始编写文档并直接部署在 GitHub Pages。
 
-<img src="images/image-20201229145404612.png" alt="image-20201229145404612" style="zoom: 30%;" />
+##### 文档结构
 
-##### 1、用docsify搭建文档类型网站
+<img src="images/image-20201229145404612.png" alt="image-20201229145404612" style="zoom: 25%;" />
+
+##### 1、用 docsify 搭建文档类型网站
+
+- docsify官方文档：https://docsify.js.org/#/zh-cn/
+
+- 也可参考我的博客：https://hanquan.blog.csdn.net/article/details/111934332
+- 也可参考：[使用 docsify 搭建文档类型网站](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247486555&idx=2&sn=8486026ee9f9ba645ff0363df6036184&chksm=cea24390f9d5ca86ff4177c0aca5e719de17dc89e918212513ee661dd56f17ca8269f4a6e303&token=298703358&lang=zh_CN#rd)
+
+步骤1：在本地 Windows 上初始化文档
 
 ```shell
-docsify init docs
-docsify serve docs
-```
-
-docsify官方文档：https://docsify.js.org/#/zh-cn/
-
-部署到服务器步骤：
-
-```shell
-###### 安装npm ######
-# 淘宝镜像，下载node，解压
-wget https://npm.taobao.org/mirrors/node/latest-v14.x/node-v14.15.3-linux-x64.tar.gz
-tar -zxvf node-v14.15.3-linux-x64.tar.gz
-# 添加软链接
-ln -s /usr/local/node/node-v14.15.3-linux-x64/bin/npm /usr/local/bin/npm
-ln -s /usr/local/node/node-v14.15.3-linux-x64/bin/node /usr/local/bin/node
-# 安装成功，查看版本
-npm -v
-
-###### windows安装docsify ######
+# windows安装docsify
 npm i docsify-cli -g
 # 初始化目录
 docsify init ./docs
 # 启动一个本地服务器，可以方便地实时预览效果。默认访问地址 http://localhost:3000
 docsify serve docs
+```
 
-###### 若在linux部署，不需要安装docsify，只需将服务器的访问根目录设定为 index.html 文件 ######
+步骤2：在 Linux 上部署。部署不需要安装docsify，只需将服务器的访问根目录设定为 index.html 文件即可。
+
+```shell
 # 修改nginx配置后，reload一下
 ./nginx -s reload
 ```
 
+##### 2、参考链接
 
+Github上一篇较全的 Java 总结：[Java Giude](https://snailclimb.gitee.io/javaguide/#/?id=java)
 
-参考：[使用 docsify 搭建文档类型网站](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247486555&idx=2&sn=8486026ee9f9ba645ff0363df6036184&chksm=cea24390f9d5ca86ff4177c0aca5e719de17dc89e918212513ee661dd56f17ca8269f4a6e303&token=298703358&lang=zh_CN#rd)
-
-##### 2、参考
-
-Github上别人的一篇不错的 Java 总结：[Java Giude](https://snailclimb.gitee.io/javaguide/#/?id=java)
-
-在线图片压缩网站：https://www.bejson.com/ui/compress_img/
+在线图片压缩网站：https://www.bejson.com/ui/compress_img/，压缩图片后，方便提高页面访问速度
 
 ##### 3、待完善
 
-github hooks
+github hooks 自动拉取代码更新
 

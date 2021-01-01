@@ -24,7 +24,7 @@ rpm -ql java-1.8.0-openjdk-1.8.0.111-1.b15.el7_2.x86_64
 
 添加环境变量
 
-```
+```shell
 vim /etc/profile
 ```
 
@@ -39,7 +39,7 @@ export PATH=$PATH:$JAVA_HOME/bin
 
 使其生效
 
-```
+```shell
 source /etc/profile
 ```
 

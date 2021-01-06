@@ -66,9 +66,9 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [8.1 zookeeper](/notes/8.1-zookeeper)：分布式协调服务，ZooKeeper 集群，节点间通信原理，Paxos 协议，ZAB协议对Paxos的简化，使用ZooKeeper实现分布式配置中心/分布式锁
 
-[9.1 关于项目](/notes/9.1-关于项目)：整体概述，项目难点，项目优化
-
 [10.1-其它](/notes/10.1-其它)：零碎资料
+
+[10.2 关于项目](/notes/10.2-关于项目)：整体概述，项目难点，项目优化
 
 
 

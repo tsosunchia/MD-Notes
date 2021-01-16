@@ -70,6 +70,8 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [10.2 关于项目](/notes/10.2-关于项目)：整体概述，项目难点，项目优化
 
+[11.1-Maven详解](/notes/11.1-Maven详解)：Maven工程类型、项目结构、工程关系、常见命令
+
 
 
 ### 公开课笔记

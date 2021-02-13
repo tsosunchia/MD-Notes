@@ -76,7 +76,9 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [12.2-Flink笔记](/notes/12.2-Flink笔记)：Stream Processing 流式处理、Parallel Dataflows 并行数据流、Stateful Stream Processing 有状态的流处理；Flink Training（Github上的练习题）；Flink Training（Github上的练习题）等
 
+[13.1-protobuf详解](/notes/13.1-protobuf详解)：protobuf 与普通 Java 对象在存储时的不同
 
+[14.1-Java位操作](/notes/14.1-Java位操作)：how to set/unset bit
 
 ### 公开课笔记
 
@@ -159,6 +161,18 @@ P8 架构师究竟要掌握什么样的技术水平？
 [](/notes/P8架构/)
 
 [](/notes/P8架构/)
+
+
+
+## 杂项
+
+[1.经验&代码规范](/notes/杂项/1.经验&代码规范)
+
+[2.日志打印级别规范](/notes/杂项/2.日志打印级别规范)
+
+[3.命令行的艺术](/notes/杂项/3.命令行的艺术)
+
+[4.推荐系统实战-阅读笔记](/notes/杂项/4.推荐系统实战-阅读笔记)
 
 
 

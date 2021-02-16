@@ -72,7 +72,7 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [11.1-Maven详解](/notes/11.1-Maven详解)：Maven工程类型、项目结构、工程关系、常见命令
 
-[12.1-Flink原理](/notes/12.1-Flink原理)：Flink vs Spark Streaming，Flink的使用
+[12.1-Flink入门](/notes/12.1-Flink入门)：Flink vs Spark Streaming，Flink的使用
 
 [12.2-Flink笔记](/notes/12.2-Flink笔记)：Stream Processing 流式处理、Parallel Dataflows 并行数据流、Stateful Stream Processing 有状态的流处理；Flink Training（Github上的练习题）；Flink Training（Github上的练习题）等
 
@@ -86,7 +86,7 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 不知道分类的，都被放在这里啦~
 
-[1.经验&代码规范](/notes/杂项/1.经验&代码规范)
+[1.不知道分类的](/notes/杂项/1.不知道分类的)
 
 [2.日志打印级别规范](/notes/杂项/2.日志打印级别规范)
 

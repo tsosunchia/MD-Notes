@@ -46,6 +46,10 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [1.9 JVM调优实战](/notes/1.9-JVM调优实战)：JVM 常用命令参数，CPU内存飙高，生产环境OOM排查方法
 
+[1.10-Java位操作](/notes/1.10-Java位操作)：how to set/unset bit
+
+[1.11-Java异步计算](/notes/1.11-Java异步计算)：CompletableFuture
+
 [2.1 MySQL](/notes/2.1-MySQL)：MySQL 基本架构，各种log，存储引擎，锁，事务，索引实现原理，索引下推
 
 [3.1 Redis](/notes/3.1-Redis)：数据类型，内存模型，AOF/RDB持久化，缓存击穿/缓存穿透/缓存雪崩，Redis集群，AKF拆分原则，一致性哈希算法
@@ -78,7 +82,7 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [13.1-protobuf详解](/notes/13.1-protobuf详解)：protobuf 与普通 Java 对象在存储时的不同
 
-[14.1-Java位操作](/notes/14.1-Java位操作)：how to set/unset bit
+
 
 
 
@@ -88,13 +92,15 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [1.不知道分类的](/notes/杂项/1.不知道分类的)
 
-[2.日志打印级别规范](/notes/杂项/2.日志打印级别规范)
+[2.日志打印级别规范](/notes/杂项/2.日志打印级别规范)：不同级别 Fatal，Error，Warn，Info，Debug/Trace 的使用场景
 
-[3.命令行的艺术](/notes/杂项/3.命令行的艺术)
+[3.命令行的艺术](/notes/杂项/3.命令行的艺术)：本文是一份我在 Linux 上工作时，发现的一些命令行使用技巧的摘要
 
-[4.推荐系统实战-阅读笔记](/notes/杂项/4.推荐系统实战-阅读笔记)
+[4.推荐系统实战-阅读笔记](/notes/杂项/4.推荐系统实战-阅读笔记)：什么是推荐系统；常见的推荐算法
 
-[5.GDB调试](/notes/杂项/5.GDB调试)
+[5.GDB调试](/notes/杂项/5.GDB调试)：GDB安装和使用；A GDB Tutorial with Examples
+
+[6.知乎客户端埋点流程、模型和平台技术](/notes/杂项/6.知乎客户端埋点流程、模型和平台技术)：埋点从技术的角度来说未必多深奥，但从业务的角度来说要做到埋点设计规范、流程高效和保证质量却是很难。本文重点介绍一下知乎客户端的埋点模型、流程和平台技术。
 
 
 
@@ -188,7 +194,7 @@ P8 架构师究竟要掌握什么样的技术水平？
 
 ## 面试题汇总
 
-收集自网络
+题目均收集自网络
 
 [2019Java面试分模块总结](/notes/面试题/2019java面试分模块总结)
 

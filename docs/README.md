@@ -102,7 +102,9 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [6.知乎客户端埋点流程、模型和平台技术](/notes/杂项/6.知乎客户端埋点流程、模型和平台技术)：埋点从技术的角度来说未必多深奥，但从业务的角度来说要做到埋点设计规范、流程高效和保证质量却是很难。本文重点介绍一下知乎客户端的埋点模型、流程和平台技术。
 
+[7.非root用户安装ack命令](/notes/杂项/7.非root用户安装ack命令)
 
+[8.Java获取主机IP](/notes/杂项/8.Java获取主机IP)
 
 ### 公开课笔记
 

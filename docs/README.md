@@ -106,6 +106,32 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [8.Java获取主机IP](/notes/杂项/8.Java获取主机IP)
 
+[9.jmap查看JVM内存对象信息](/notes/杂项/9.jmap查看JVM内存对象信息)
+
+[10.python使用pdb调试](/notes/杂项/10.python使用pdb调试)
+
+[11.shell重定向](/notes/杂项/11.shell重定向)
+
+
+
+### C++笔记
+
+[1.C++基础](/notes/C++笔记/1.C++基础)
+
+[2.using关键字在C++中的几种用法](/notes/C++笔记/2.using关键字在C++中的几种用法)
+
+[3.gdb命令](/notes/C++笔记/3.gdb命令)
+
+
+
+### 大数据
+
+[1.初识大数据](/notes/大数据/1.初识大数据)
+
+[2.HDFS](/notes/大数据/2.HDFS)
+
+
+
 ### 公开课笔记
 
 [1-分布式锁，从单机到多机](/notes/公开课笔记/1-分布式锁，从单机到多机)

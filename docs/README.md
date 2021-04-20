@@ -114,6 +114,14 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 
 
+### ARHUD
+
+[7.新人串讲-ARHUD](/notes/ARHUD/7.新人串讲-ARHUD.md)
+
+[8.串讲-kafka](/notes/ARHUD/8.串讲-kafka.md)
+
+
+
 ### C++笔记
 
 [1.C++基础](/notes/C++笔记/1.C++基础)

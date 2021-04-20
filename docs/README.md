@@ -116,9 +116,9 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 ### ARHUD
 
-[7.新人串讲-ARHUD](/notes/ARHUD/7.新人串讲-ARHUD.md)
+[7.新人串讲-ARHUD](/notes/SLAM/7.新人串讲-ARHUD.md)
 
-[8.串讲-kafka](/notes/ARHUD/8.串讲-kafka.md)
+[8.串讲-kafka](/notes/SLAM/8.串讲-kafka.md)
 
 
 

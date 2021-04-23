@@ -118,11 +118,13 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [7.新人串讲-ARHUD](/notes/SLAM/7.新人串讲-ARHUD.md)
 
-[8.kafka串讲](/notes/SLAM/8.kafka串讲.md)
+[8.kafka串讲文字版](/notes/SLAM/8.kafka串讲.md)
 
 [9.环境搭建](/notes/SLAM/9.环境搭建.md)
 
 [11.程序缺陷以及正确性证明](/notes/SLAM/11.程序缺陷以及正确性证明.md)
+
+[12.kafka架构模型推导知识分享.md](/notes/SLAM/12.kafka架构模型推导知识分享.md)
 
 ### C++笔记
 

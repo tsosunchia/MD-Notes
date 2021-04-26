@@ -124,7 +124,11 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [11.程序缺陷以及正确性证明](/notes/SLAM/11.程序缺陷以及正确性证明.md)
 
-[12.kafka架构模型推导知识分享.md](/notes/SLAM/12.kafka架构模型推导知识分享.md)
+[12.kafka架构模型推导知识分享](/notes/SLAM/12.kafka架构模型推导知识分享.md)
+
+[13.DF-VO](/notes/SLAM/13.DF-VO.md)
+
+[16.20210517-VO原理推导串讲](/notes/SLAM/16.20210517-VO原理推导串讲.md)
 
 ### C++笔记
 

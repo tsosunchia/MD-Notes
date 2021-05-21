@@ -4,7 +4,7 @@
 
 业余时间学习技术的同时，做一些记录和总结并乐于分享。
 
-日常主要接触 Web 前后端开发、Linux 运维等，有 Java / Python 后端经验，熟练运用 MySQL，Redis，Zookeeper 及常用前后端框架 Vue，Spring，Flask 等，熟悉自动化运维工具 Docker, Kubernetes 等。
+日常主要接触 Web 前后端开发、Linux 运维等，有 Java / Python 后端经验，有大数据开发 Flink，Spark 实战经验，熟练运用 MySQL，Redis，Zookeeper 及常用前后端框架 Vue，Spring，Flask 等，熟悉自动化运维工具 Docker, Kubernetes 等。
 
 希望踏实走技术路线，对业务、架构以及技术的底层知识做一些更深入的研究。
 
@@ -111,6 +111,14 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 [10.python使用pdb调试](/notes/杂项/10.python使用pdb调试)
 
 [11.shell重定向](/notes/杂项/11.shell重定向)
+
+[12.模型思维-阅读笔记](/notes/杂项/12.模型思维-阅读笔记)
+
+
+
+### 推荐系统
+
+[12.深度学习推荐系统-阅读笔记](/notes/推荐系统/12.深度学习推荐系统-阅读笔记)
 
 
 

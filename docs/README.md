@@ -118,9 +118,9 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 ### 推荐系统
 
-[12.深度学习推荐系统-阅读笔记](/notes/推荐系统/12.深度学习推荐系统-阅读笔记)
+[2.深度学习推荐系统-阅读笔记](/notes/推荐系统/2.深度学习推荐系统-阅读笔记)
 
-
+[3.组会分享](/notes/推荐系统/3.组会分享)
 
 ### ARHUD
 

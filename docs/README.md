@@ -138,6 +138,8 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [16.20210517-VO原理推导串讲](/notes/SLAM/16.20210517-VO原理推导串讲.md)
 
+[17.对极几何](/notes/SLAM/17.对极几何.md)
+
 ### C++笔记
 
 [1.C++基础](/notes/C++笔记/1.C++基础)

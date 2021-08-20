@@ -1,71 +1,36 @@
-My idea is to update and record **head** in each turn. when the total number becomes 1, head is the only number left.
+简介
+在编程中，递归是非常常见的一种算法，由于代码简洁而应用广泛，但递归相比顺序执行或循环程序，时间复杂度难以计算，而master公式就是用于计算递归程序的时间复杂度。
+
+公式
+T(N) = aT(N/b) + O(N^d)
+
+b：子过程的样本量
+a：子过程的计算次数
+O(N^d)：子结果合并的时间复杂度
+满足如上公式的程序都可以根据master公式计算时间复杂度：
+
+log(b，a) > d ：时间复杂度为O(N^log(b，a))
+log(b，a) = d ：时间复杂度为O(N^d * logN)
+log(b，a) < d ：时间复杂度为O(N^d)
 
 
 
-When will head be updated?
+
+
+大作业：就是我们的项目
+
+能跟着真实项目做，就做真实项目，也会把讲的东西放进去。
+
+8讲+软件工程实践，比课程东西要多一些。在做实际项目的时候，也可以参考和使用。
+
+总而言之，就是需要做真实项目，优先实际项目，也会有开源项目
 
 
 
-- if we move from left
-- if we move from right and the total remaining number % 2 == 1
-  like 2 4 6 8 10, we move from 10, we will take out 10, 6 and 2, head is deleted and move to 4
-  like 2 4 6 8 10 12, we move from 12, we will take out 12, 8, 4, head is still remaining 2
+卫星数据库：岳硕磊，李燕
 
+晚上讲一下项目周期，安排
 
+zhanghaotong，chengtonglin 做一个在局域网内基于 xconnect 数据总线的文件发送工具
 
-then we find a rule to update our head.
-
-
-
-example:
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
-
-
-
-1. 
-
-   Let us start with **head = 1, left = true, step = 1 (times 2 each turn), remaining = n(24)**
-
-   
-
-2. 
-
-   we first move from left, we definitely need to move head to next position. **(head = head + step)**
-   So after first loop we will have:
-   1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 - > 2 4 6 8 10 12 14 16 18 20 22 24
-   **head = 2, left = false, step = 1 \* 2 = 2, remaining = remaining / 2 = 12**
-
-   
-
-3. 
-
-   second loop, we move from right, in what situation we need to move head?
-   only if the remaining % 2 == 1, in this case we have 12 % 2 == 0, we don't touch head.
-   so after this second loop we will have:
-   2 4 6 8 10 12 14 16 18 20 22 24 - > 2 6 10 14 18 22
-   **head = 2, left = true, step = 2 \* 2 = 4, remaining = remaining / 2 = 6**
-
-   
-
-4. 
-
-   third loop, we move from left, move head to next position
-   after third loop we will have:
-   2 6 10 14 18 22 - > 6 14 22
-   **head = 6, left = false, step = 4 \* 2 = 8, remaining = remaining / 2 = 3**
-
-   
-
-5. 
-
-   fourth loop, we move from right, NOTICE HERE:
-   we have remaining(3) % 2 == 1, so we know we need to move head to next position
-   after this loop, we will have
-   6 14 22 - > 14
-   **head = 14, left = true, step = 8 \* 2 = 16, remaining = remaining / 2 = 1**
-
-   
-
-6. 
-
-   while loop end, return head
+rsync scp

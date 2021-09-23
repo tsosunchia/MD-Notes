@@ -1,84 +1,31 @@
-#### 为什么会出现 “被夸者认为夸人者是为了夸而夸” 这种现象
-
-##### 定义
-
-首先，我们定义两个人：【夸人者】、【被夸者】
-
-然后，我们定义三个视角：【夸人者视角】、【被夸着视角】、【上帝视角】。
-
-其中我们假设，【夸人者视角】与【被夸者视角】是相对认知，【上帝视角】是正确的绝对认知。
-
-##### 分析&结论
-
-下面我们分析，为什么会出现 “被夸者认为夸人者是为了夸而夸” 这种现象。
-
-从【夸人者视角】来看，夸的内容分两种情况：
-
-1. 为了夸而夸（违心地夸）
-2. 根据对被夸着的认知来夸（真心的夸）
-
-从【被夸者视角】来看，夸的内容分两种情况：
-
-1. 符合对自己的认知（夸到点上）
-2. 不符合对自己的认知（没夸到点上）
-
-这样一来，对于同一个夸的内容，夸人者和被夸者之间的感受共存在 4 种组合：
-
-- [1 & 1] 违心的夸，却夸的正中下怀
-- [1 & 2] 违心的夸，而且没有夸到点上
-- [2 & 1] 真心的夸，而且夸的正中下怀
-- [2 & 2] 真心的夸，但没有夸到被夸人认为的点上
-
-回到我们的问题，“被夸者认为夸人者是为了夸而夸” 这种现象，它的表现可能是是 [1&2] 或者 [2&2] 组合。因为  [1&2] 包含违心的夸的成分，是不被提倡的，所以不讨论。下面我们分析  [2&2] 这个组合。如果我们从具有正确绝对认知的【上帝视角】来看这 4 种组合的话，[1&1] 和 [2&2] 这两种组合是不应该存在的。事实上，这 2 种组合存在的原因是夸人者与被夸者具有的是相对认知，而非绝对认知。
 
 
+#### Approach #1: Subtree Sum and Count [Accepted]
 
+**Intuition**
 
+Let `ans` be the returned answer, so that in particular `ans[x]` be the answer for node `x`.
 
-简介
-在编程中，递归是非常常见的一种算法，由于代码简洁而应用广泛，但递归相比顺序执行或循环程序，时间复杂度难以计算，而master公式就是用于计算递归程序的时间复杂度。
+Naively, finding each `ans[x]` would take O(N)*O*(*N*) time (where N*N* is the number of nodes in the graph), which is too slow. This is the motivation to find out how `ans[x]` and `ans[y]` are related, so that we cut down on repeated work.
 
-公式
-T(N) = aT(N/b) + O(N^d)
+Let's investigate the answers of neighboring nodes x*x* and y*y*. In particular, say xy*x**y* is an edge of the graph, that if cut would form two trees X*X* (containing x*x*) and Y*Y* (containing y*y*).
 
-b：子过程的样本量
-a：子过程的计算次数
-O(N^d)：子结果合并的时间复杂度
-满足如上公式的程序都可以根据master公式计算时间复杂度：
+![Tree diagram illustrating recurrence for ans[child]](../docs/images/sketch1.png)
 
-log(b，a) > d ：时间复杂度为O(N^log(b，a))
-log(b，a) = d ：时间复杂度为O(N^d * logN)
-log(b，a) < d ：时间复杂度为O(N^d)
+Then, as illustrated in the diagram, the answer for x*x* in the entire tree, is the answer of x*x* on X*X* `"x@X"`, plus the answer of y*y* on Y*Y* `"y@Y"`, plus the number of nodes in Y*Y* `"#(Y)"`. The last part `"#(Y)"` is specifically because for any node `z in Y`, `dist(x, z) = dist(y, z) + 1`.
 
+By similar reasoning, the answer for y*y* in the entire tree is `ans[y] = x@X + y@Y + #(X)`. Hence, for neighboring nodes x*x* and y*y*, `ans[x] - ans[y] = #(Y) - #(X)`.
 
+**Algorithm**
 
+Root the tree. For each node, consider the subtree S_{\text{node}}*S*node of that node plus all descendants. Let `count[node]` be the number of nodes in S_{\text{node}}*S*node, and `stsum[node]` ("subtree sum") be the sum of the distances from `node` to the nodes in S_{\text{node}}*S*node.
 
+We can calculate `count` and `stsum` using a post-order traversal, where on exiting some `node`, the `count` and `stsum` of all descendants of this node is correct, and we now calculate `count[node] += count[child]` and `stsum[node] += stsum[child] + count[child]`.
 
-大作业：就是我们的项目
+This will give us the right answer for the `root`: `ans[root] = stsum[root]`.
 
-能跟着真实项目做，就做真实项目，也会把讲的东西放进去。
+Now, to use the insight explained previously: if we have a node `parent` and it's child `child`, then these are neighboring nodes, and so `ans[child] = ans[parent] - count[child] + (N - count[child])`. This is because there are `count[child]` nodes that are `1` easier to get to from `child` than `parent`, and `N-count[child]` nodes that are `1` harder to get to from `child` than `parent`.
 
-8讲+软件工程实践，比课程东西要多一些。在做实际项目的时候，也可以参考和使用。
+![Tree diagram illustrating recurrence for ans[child]](../docs/images/sketch2.png)
 
-总而言之，就是需要做真实项目，优先实际项目，也会有开源项目
-
-
-
-卫星数据库：岳硕磊，李燕
-
-晚上讲一下项目周期，安排
-
-zhanghaotong，chengtonglin 做一个在局域网内基于 xconnect 数据总线的文件发送工具
-
-rsync scp
-
-
-
-
-
-
-
-
-
-
-
+Using a second, pre-order traversal, we can update our answer in linear time for all of our nodes.

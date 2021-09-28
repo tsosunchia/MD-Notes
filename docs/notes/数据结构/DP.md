@@ -28,4 +28,98 @@
 >
 > 在众多数学大牛中，我最讨厌的就是高斯，为啥？因为高斯为了显示自己特别牛逼，他把一个证明的所有思考轨迹全擦的干干净净，就给你留最后的结论以及中间简单的推理步骤，这个东西它毁掉很多的精华，有人说他像一个林间的老狐狸一样，用狐狸尾巴擦掉自己思维的所有轨迹，给你看到的证明都是特别漂亮的样子。有啥用啊？是，你被认为是外星人留在地球的遗孤，厉害，我等凡人只能膜拜，有啥用啊？你留下那些结论，你把那些思维轨迹都写出来，不是更加激励后人吗？
 > 所以，以后有一天，你变成高手了，希望你对新手好一点。
+>
+> 自然智慧 vs 人工智慧
+>
+> 不怎么需要门槛，你长这么大，通过自然界遇到的事情掌握的能力，以他作为门槛就能想明白的事情，叫做自然智慧；你不得不经受这个行业的训练，掌握了很多的事实，才有可能懂的那些东西，叫人工智慧。我已经把动态规划只落在你的自然智慧上，剩下你只要试出来一个东西，底下所有东西都成套路了，这就是最精彩的地方。
+
+##### 斜率优化题：求裂开的方法数（整数拆分问题）
+
+给定一个正数n，求n的裂开方法数。规定：后面的数不能比前面的数小 。比如4的裂开方法有： 1+1+1+1、1+1+2、1+3、2+2、4，5种，所以返回5。
+
+```java
+public class Code03_SplitNumber {
+
+	// n为正数
+	public static int ways(int n) {
+		if (n < 0) {
+			return 0;
+		}
+		if (n == 1) {
+			return 1;
+		}
+		return process(1, n);
+	}
+
+	// 上一个拆出来的数是pre
+	// 还剩rest需要去拆
+	// 返回拆解的方法数
+	public static int process(int pre, int rest) {
+		if (rest == 0) {
+			return 1;
+		}
+		if (pre > rest) {
+			return 0;
+		}
+		int ways = 0;
+		for (int first = pre; first <= rest; first++) {
+			ways += process(first, rest - first);
+		}
+		return ways;
+	}
+
+	public static int dp1(int n) {
+		if (n < 0) {
+			return 0;
+		}
+		if (n == 1) {
+			return 1;
+		}
+		int[][] dp = new int[n + 1][n + 1];
+		for (int pre = 1; pre <= n; pre++) {
+			dp[pre][0] = 1;
+			dp[pre][pre] = 1;
+		}
+		for (int pre = n - 1; pre >= 1; pre--) {
+			for (int rest = pre + 1; rest <= n; rest++) {
+				int ways = 0;
+				for (int first = pre; first <= rest; first++) {
+					ways += dp[first][rest - first];
+				}
+				dp[pre][rest] = ways;
+			}
+		}
+		return dp[1][n];
+	}
+
+	public static int dp2(int n) {
+		if (n < 0) {
+			return 0;
+		}
+		if (n == 1) {
+			return 1;
+		}
+		int[][] dp = new int[n + 1][n + 1];
+		for (int pre = 1; pre <= n; pre++) {
+			dp[pre][0] = 1;
+			dp[pre][pre] = 1;
+		}
+		for (int pre = n - 1; pre >= 1; pre--) {
+			for (int rest = pre + 1; rest <= n; rest++) {
+				dp[pre][rest] = dp[pre + 1][rest];
+				dp[pre][rest] += dp[pre][rest - pre];
+			}
+		}
+		return dp[1][n];
+	}
+
+	public static void main(String[] args) {
+		int test = 39;
+		System.out.println(ways(test));
+		System.out.println(dp1(test));
+		System.out.println(dp2(test));
+	}
+
+}
+```
 

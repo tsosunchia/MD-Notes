@@ -29,3 +29,19 @@ Now, to use the insight explained previously: if we have a node `parent` and it'
 ![Tree diagram illustrating recurrence for ans[child]](../docs/images/sketch2.png)
 
 Using a second, pre-order traversal, we can update our answer in linear time for all of our nodes.
+
+
+
+```
+71.井冈山革命根据地
+72.一国两制
+73.共同违纪
+74.延长预备期
+75.重大政策
+76.农奴
+77.擅自改变
+78.匿名诬告
+79.邓小平
+80.书面结论
+```
+

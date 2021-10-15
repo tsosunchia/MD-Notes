@@ -17,10 +17,85 @@
 
 ### Future (After 2022.03)
 
+> zlibrary 找电子书
+
 - 算法导论
 - 深入理解Linux内核
 - 编译原理
 - 理解了实现再谈网络性能
+- SICP
+
+### MIT 麻省理工
+
+> 如何做上面的 lab？
+>
+> 优质课程收集：https://github.com/jackwener/CS-Awesome-Courses/blob/master/README.md
+
+- 6.854 算法进阶
+- [MIT 大名鼎鼎的 6.828 Operating System](https://pdos.csail.mit.edu/6.828/2018/schedule.html) 和 6.S01 一样
+- 线性代数 18.06
+
+这个网站是提供MIT课程视频的, https://ocw.mit.edu/, 你把课程号（例如：6•006）输入搜索栏就能显示课程了，但是有少数课程不提供课程视频，不过大多数课程是提供的。
+
+[6.824 ](https://link.zhihu.com/?target=https%3A//pdos.csail.mit.edu/6.824/)Distributed System: 系统方向非常好的一门课程，每堂课都讲一个新的分布式系统模型，没有教材，每堂课都是直接讲论文。老师是MIT PDOS的神牛Robert Morris (不错，这人就是当年因为发明蠕虫病毒而蹲监然后回MIT当教授的神人)和Frans Kaashoek。这些分布式系统都是实际用在各个大公司里的系统，比如说Spark, GFS，PNUTS。当年我修这门课的时候感觉课程压力非常大，有期中期末考试，有lab作业，有reading work, 还有course project，但是整个课程设计得非常好。lab要用Golang实现，硬生生地学了门新的语言。最后我的course project是用Go实现了一个Spark原型系统（[metalbubble/GoSpark](https://link.zhihu.com/?target=https%3A//github.com/metalbubble/GoSpark)），那个还是2013年的时候，Spark还刚开始崭露头角：）。
+
+6.830 [Database Systems](https://link.zhihu.com/?target=http%3A//db.csail.mit.edu/6.830/): 数据库系统的一门核心课程。由数据库的一大山头Samuel Madden教授。前半部分比较基础的数据库的知识，后半段主要在讲Distributed Databases的东西，各种consistency挺有意思，也是database比较火的研究方向。
+
+[18.409 Algorithmic Aspects of Machine Learning, Spring 2015](https://link.zhihu.com/?target=http%3A//people.csail.mit.edu/moitra/409.html): Ankur Moitra教的machine learning课程。课程切入点跟一般的机器学习课程都不同，Ankur自己是做theory背景的（攻FOCS, STOC之类的会），所以这个课程有深厚的理论根基。对sparse coding, topic model, tensor decompositions等会有脑洞大开的认识。
+
+6.869 Advances in Computer Vision ([Fall 2016](https://link.zhihu.com/?target=http%3A//6.869.csail.mit.edu/fa16/) [Fall 2015](https://link.zhihu.com/?target=http%3A//6.869.csail.mit.edu/fa15/)) 我TA过的一门计算机视觉的课程。课件不错，过了一遍CV的传统内容，也增加了很多deep learning的内容，适合初学者入门，也适合除了deep learning就不懂computer vision其他东西的朋友。。。Final Project我设计了一个Mini Places Challenge, 让学生可以组队比赛，训练深度模型。
+
+
+
+强推：[6.006 Introduction to Algorithms](https://link.zhihu.com/?target=https%3A//www.youtube.com/watch%3Fv%3DHtSuA80QTyo%26list%3DPLUl4u3cNGP61Oq3tWYp6V_F-5jb5L2iHb)
+
+主讲人：Srini Devadas, Professor at MIT
+
+这是一门比较难的算法课，一定要做他们的练习题，不然无法保证你真的理解了这些算法。犹记得15年的时候准备google的面试，一周把这门课上完了，然而并没有掌握好。难归难，算法则是一定要学好的。
+
+
+
+强推：[Networking tutorial](https://link.zhihu.com/?target=https%3A//www.youtube.com/watch%3Fv%3DXaGXPObx2Gs%26list%3DPLowKtXNTBypH19whXTVoG3oKSuOcw_XeW%26index%3D1)
+
+主讲人：Ben Eater, Khan Academy(former)
+
+这是一门很短却直至精髓的课。从大家都能看到的网线开始讲电信号如何传输，最后以介绍TCP协议为止。每个人对学习方法的偏好不同，有人喜欢抽象，有人喜欢具体，我正好是后者。这门课就非常具体，把每个bit如何在网络中游走讲的一清二楚。这门课不涉及算法，优化等，十分适合入门。
+
+
+
+推荐：[Distributed Computer Systems](https://link.zhihu.com/?target=https%3A//www.youtube.com/playlist%3Flist%3DPLawkBQ15NDEkDJ5IyLIJUTZ1rRM9YQq6N)
+
+Srinivasan Keshav, Professor of Computer Science at the University of Cambridge
+
+这门课主要讲的是网络通信，从底层的switch一步步讲到TCP等协议。老师很有意思，课上各种喷google是如何侵犯大家的隐私的。
+
+
+
+推荐：[Intro to Computer Science](https://link.zhihu.com/?target=https%3A//classroom.udacity.com/courses/cs101)
+
+主讲人：David Evans, Professor of Computer Science University of Virginia
+
+这门课的核心是使用python来打造一个搜索引擎。之所以推荐它，是因为这门课更接近于软件工程，有大量的实际操作，需要你写出正确的代码才能进行下一步学习。另外这位老师的冷笑话也蛮好听，后面还会推荐他的另一门课。
+
+
+
+推荐：[Computation Structures](https://link.zhihu.com/?target=https%3A//www.youtube.com/user/Cjtatmitdotedu/feed)
+
+主讲人：Chris Terman. Senior Lecturer, Electrical Engineering and Computer Science at MIT
+
+对于想要了解计算机是如何从简单的电压变化演变到现在的操作系统的，可以看看这门课。老头子风趣幽默，特别喜欢冷笑话。
+
+
+
+推荐：[C++ Tutorial](https://link.zhihu.com/?target=https%3A//www.youtube.com/watch%3Fv%3D18c3MTX0PK0%26list%3DPLlrATfBNZ98dudnM48yfGUldqGD0S4FFb)
+
+主讲人：The Cherno(Yan Chernikov), Software Engineer at Electronic Arts (EA)
+
+小伙子长得贼精神，讲的贼清楚，若想要学C++，推荐看他的视频。
+
+
+
+
 
 ### 2022.03
 

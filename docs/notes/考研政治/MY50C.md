@@ -10,6 +10,12 @@ Karmam filter ：GPS怎么实时计算速度 定位误差怎么办？
 
 旅行商问题怎么实现？
 
+crontab怎么实现（触发）的？时钟怎么实现的？
+
+ntp时钟服务器怎么搭建？dns怎么污染？
+
+docker命令为什么要加sudo？
+
 ### Total (Before 2022.03)
 
 - 论文 / 专利

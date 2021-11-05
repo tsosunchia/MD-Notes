@@ -216,7 +216,9 @@ Github 地址：[https://github.com/HanquanHq/MD-Notes](https://github.com/Hanqu
 
 [3-Linux系统](/notes/Linux运维/3-Linux系统)
 
+[9.gitee-ssh-permission-denied](/notes/Linux运维/9.gitee-ssh-permission-denied)
 
+[10.apt-vnc4server-has-no-installation-candidate](/notes/Linux运维/10.apt-vnc4server-has-no-installation-candidate)
 
 ## P8架构
 
